@@ -1,6 +1,6 @@
 ﻿# 配置端口
 server:
-   port: 8080
+   port: 8090
 spring:
    profiles: dev
 #   上传文件总的最大值
@@ -22,9 +22,9 @@ spring:
 #开启热部署
    datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/team_work?serverTimezone=GMT%2B8&useSSL=false
-      username: team
-      password: team
+      url: jdbc:mysql://127.0.0.1:3306/school_life?serverTimezone=GMT%2B8&useSSL=false
+      username: school
+      password: school
 # 配置数据源
       type: com.alibaba.druid.pool.DruidDataSource
       hikari:
@@ -39,7 +39,9 @@ spring:
          hibernate:
             enable_lazy_load_no_trans: true
 # hibernate
+#jwt
 jwt:
+   # 令牌前缀
    header: Authorization
 # properties
    token-start-with: Bearer
@@ -48,11 +50,28 @@ jwt:
 #mybatis:
 #   mapper-locations: classpath:mapping/*Mapper.xml
 #   type-aliases-package: com.example.entity
-#jwt
-mybatis:
+mybatis-plus:
+   #实体扫描，多个package用逗号或者分号分隔
+   type-aliases-package: net.mw.school.pojo.po
    configuration:
-# 令牌前缀
+      #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
       map-underscore-to-camel-case: true
+      cache-enabled: false
+      #当查询数据为空时字段返回为null，不加这个查询数据为空时，字段将被隐藏
+      call-setters-on-nulls: true
+      auto-mapping-behavior: full
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+   global-config:
+      # 逻辑删除配置
+      db-config:
+         #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+        # id-type: id_worker
+         #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+        # field-strategy: not_empty
+         # 删除前
+         logic-not-delete-value: 1
+         # 删除后
+         logic-delete-value: 0
 # 使用Base64对该令牌进行编码
 pagehelper:
 #(制定您的密钥)

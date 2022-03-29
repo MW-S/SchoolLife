@@ -7,7 +7,7 @@
 package net.mw.system.pojo.vo;
 
 import lombok.Data;
-import net.mw.system.pojo.base.Base;
+import net.mw.system.pojo.base.BaseVO;
 
 /**
  * @Description UserVO接口实现
@@ -15,7 +15,7 @@ import net.mw.system.pojo.base.Base;
  * @CrateTime 2020-04-17 18:57:54
  */
 @Data
-public class UserVO extends Base{
+public class UserVO extends BaseVO {
 	/**
 	 * 用户主键
 	 */

@@ -125,6 +125,7 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 		.authorizeRequests()
 		.antMatchers("/.well-known/**").permitAll()  //设置所有人可以访问
 		.antMatchers("/user/login").permitAll()  //设置所有人可以访问
+		.antMatchers("/user/add").permitAll()  //设置所有人可以访问
 		.antMatchers("/user/**").hasAnyAuthority("admin") //设置指定角色才能访问
 		.antMatchers("/swagger-ui.html").permitAll() //设置指定角色才能访问
 		.antMatchers("/swagger-resources/**").permitAll()

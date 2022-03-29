@@ -1,0 +1,350 @@
+set autocommit=0;
+drop database if exists school_life;
+create database school_life charset utf8 collate utf8_general_ci;
+use school_life;
+
+create user 'school'@'%' identified by 'school';
+grant all on school_life.* to school@'%';
+
+drop table if exists vindicate;
+drop table if exists note;
+drop table if exists goods;
+drop table if exists dormitory_user;
+drop table if exists dormitory;
+drop table if exists seat_order;
+drop table if exists seat;
+drop table if exists delivery_order;
+drop table if exists food;
+drop table if exists canteen;
+drop table if exists parking_order;
+drop table if exists parking;
+drop table if exists car;
+DROP TABLE IF EXISTS userrolemap;
+DROP TABLE IF EXISTS rolepermissionmap;
+DROP TABLE IF EXISTS permissions;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS role;
+DROP TABLE IF EXISTS actionpower;
+
+
+create table user(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '用户编号',
+	avatar_url varchar(256) not null comment '头像',
+	name varchar(256) not null comment '用户名',
+	type int(1) not null default 0 comment '用户类型',
+	password text not null comment '密码',
+	gender tinyint(1) not null default 0 comment '性别：0:未知,1:女,2:男',
+	phone int(11) not null default 0 comment '手机号码',
+	session_key varchar(256) null comment '会话密钥',
+	salt varchar(64)  null comment'盐值',
+	state tinyint(1) null default 1 comment'账号状态 1是正常 0是禁用',
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table role(
+  id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '角色编号',
+  name varchar(256) not null comment '角色名',
+  `create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+  `is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+
+  primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table permissions(
+  id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '权限编号',
+  name varchar(256) not null comment '权限名',
+  parent bigint(16) UNSIGNED null default null comment '父级权限',
+  perms varchar(256) not null comment '权限标识',
+  `create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+  `is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+  index (parent),
+  FOREIGN KEY (parent) REFERENCES permissions(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table actionpower(
+  id bigint(16) UNSIGNED not null AUTO_INCREMENT comment 'action编号',
+  name varchar(256) not null comment 'action名',
+  perm varchar(256) not null comment '权限',
+  `create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+  `is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+  primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table userrolemap(
+  id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '用户角色编号',
+  userid bigint(16) UNSIGNED not null comment '用户ID',
+  roleid bigint(16) UNSIGNED not null comment '角色ID',
+  	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+  index (userid),
+  index (roleid),
+  FOREIGN KEY (userid) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (roleid) REFERENCES role(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+create table rolepermissionmap(
+  id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+  roleid bigint(16) UNSIGNED not null comment '角色ID',
+  permissionid bigint(16) UNSIGNED not null comment '权限ID',
+  `create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+  `is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+  primary key(id),
+  index (roleid),
+  index (permissionid),
+  FOREIGN KEY (roleid) REFERENCES role(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (permissionid) REFERENCES permissions(id) ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+alter table `user`
+    add  column `account` varchar(256) charset utf8 collate utf8_general_ci not null comment '登录账号' after type;
+
+ALTER TABLE `user`
+	CHANGE COLUMN `avatar_url` `avatar_url` VARCHAR(256) NULL COMMENT '头像' COLLATE 'utf8_general_ci' AFTER `id`;
+ALTER TABLE `user`
+	CHANGE COLUMN `phone` `phone` bigint(11) not null default 0 comment '手机号码'  after `gender`;
+
+
+create table vindicate(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '表白内容编号',
+	content text not null comment '内容',
+
+	user_id bigint(16) UNSIGNED not null  comment '创建人ID',
+
+	state tinyint(1) null default 0 comment'状态 1-可见  0-不可见',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+create table note(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '个人动态内容编号',
+	content text not null comment '内容',
+
+	user_id bigint(16) UNSIGNED not null  comment '创建人ID',
+
+	state tinyint(1) null default 0 comment'状态 1-可见  0-不可见',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+create table goods(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '闲置物品编号',
+	name varchar(256) not null comment '闲置物品名',
+	type varchar(128) not null comment '闲置物品种类',
+	info text not null comment '物品信息---富文本',
+
+
+	user_id bigint(16) UNSIGNED not null  comment '发布人ID',
+	buyer_id bigint(16) UNSIGNED DEFAULT null  comment '购买人ID',
+
+	audit_state tinyint(2) null default 0 comment'物品审核状态 2-未过审 1-已过审  0-待审核',
+	state tinyint(1) null default 0 comment'物品状态 1-已出售  0-未出售',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	foreign key(buyer_id) references user(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+create table dormitory(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '宿舍编号',
+	name varchar(256) not null comment '宿舍牌号',
+	location varchar(128) not null comment '宿舍所属栋',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#宿舍人员表
+create table dormitory_user(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+
+	user_id bigint(16) UNSIGNED not null  comment '住宿人ID',
+	dormitory_id bigint(16) UNSIGNED not null  comment '宿舍ID',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	foreign key(dormitory_id) references dormitory(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#图书馆座位表
+create table seat(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+	code varchar(16) not null comment '座位号',
+	location varchar(128) not null comment '所在教室',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+#座位预约订单表
+create table seat_order(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+
+	user_id bigint(16) UNSIGNED not null  comment '使用人ID',
+	seat_id bigint(16) UNSIGNED not null  comment '座位ID',
+
+	use_time varchar(16) not null comment '使用时长',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	foreign key(seat_id) references seat(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+#跑腿配送表
+create table delivery_order(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+
+	name varchar(128) not null comment '商品名',
+	price varchar(16) not null comment '价格',
+	commission varchar(128) not null comment '佣金',
+	tag varchar(128) DEFAULT null comment '备注',
+	address text DEFAULT null comment '特定购买地点',
+
+	user_phone varchar(16) not null comment '用户电话',
+	server_phone varchar(16) DEFAULT null comment '骑手电话',
+
+	user_id bigint(16) UNSIGNED not null  comment '订单创建人ID',
+	server_id bigint(16) UNSIGNED DEFAULT null  comment '订单骑手ID',
+
+	state tinyint(2) null default 0 comment'订单状态 2-已送达 1-配送中  0-取货中',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	foreign key(server_id) references user(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#饭堂表
+create table canteen(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+	name varchar(128) not null comment '饭堂名',
+	pictures text DEFAULT null comment '饭堂图片',
+	location varchar(128) not null comment '饭堂地点',
+	open_time varchar(128) NOT NULL COMMENT '营业时间',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#饭堂菜品表
+create table food(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+	name varchar(128) not null comment '食物名',
+	pictures text DEFAULT null comment '食物图片',
+	offer_date date NOT NULL COMMENT '提供日期',
+
+	canteen_id bigint(16) UNSIGNED not null  comment '饭堂ID',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(canteen_id) references canteen(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#停车位表
+create table parking(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+	code varchar(128) not null comment '车位号',
+
+	state tinyint(1) null default 0 comment'车位状态 1-已占用  0-空闲',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+#车辆表
+create table car(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+	number varchar(16) not null comment '车牌号',
+	user_id bigint(16) UNSIGNED DEFAULT null  comment '用户ID',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(user_id) references user(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+#停车订单表
+create table parking_order(
+	id bigint(16) UNSIGNED not null AUTO_INCREMENT comment '编号',
+
+	parking_id bigint(16) UNSIGNED not null  comment '车位ID',
+	car_id bigint(16) UNSIGNED DEFAULT null  comment '车辆ID',
+
+	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '入场时间',
+	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',
+	`is_locked` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否冻结',
+	foreign key(parking_id) references parking(id) on delete cascade on update cascade,
+	foreign key(car_id) references car(id) on delete cascade on update cascade,
+	primary key(id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+commit;
+set autocommit=1;

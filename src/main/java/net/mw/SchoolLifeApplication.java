@@ -12,7 +12,7 @@ import net.mw.system.config.jwt.JwtAuthenticationTokenFilter;
 
 @SpringBootApplication(scanBasePackages = "net.mw")
 @EnableTransactionManagement
-@MapperScan(basePackages = "net.mw.system.dao, net.mw.schoollife.dao")
+//@MapperScan({"net.mw.system.dao", "net.mw.school.dao"})
 public class SchoolLifeApplication {
 
     public static void main(String[] args){

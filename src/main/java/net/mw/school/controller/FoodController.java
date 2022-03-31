@@ -1,5 +1,6 @@
 package net.mw.school.controller;
 
+import net.mw.school.dao.CanteenDao;
 import net.mw.school.pojo.po.FoodPO;
 import net.mw.school.pojo.po.NotePO;
 import net.mw.school.pojo.vo.FoodVO;
@@ -12,6 +13,7 @@ import net.mw.system.pojo.po.UserPO;
 import net.mw.system.result.ResultMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,8 @@ public class FoodController extends BaseController<FoodService, FoodPO, FoodVO> 
      */
     private static Logger logger = LogManager.getLogger(FoodController.class);
 
+    @Autowired
+    CanteenDao canteenDao;
     @PostMapping(value = "/save")
     public ResultMessage save(@RequestBody FoodVO vo, @CurrentUser UserPO currentUser){
         return this.save(vo);

@@ -111,9 +111,17 @@ public class BaseServiceImpl <M extends BaseMapper<T>, T, V> extends ServiceImpl
             }
             Map<String,Object> data = new HashMap<String,Object>();
             T resPo = (T) dao.getById(id);
-            CanteenVO resVo = new CanteenVO();
+            Class<?> cla =  getGenericClass(2);
+            V resVo = (V)cla.getDeclaredConstructor().newInstance();
             if(ObjectUtils.allNotNull(resPo)){
-                resVo.poToVo(resPo);
+                Method method = null;
+                for(Method m: cla.getMethods()){
+                    if(m.getName().equals("poToVo")){
+                        method = m;
+                        break;
+                    }
+                }
+                method.invoke(resVo,resPo);
             }
             data.put("data",resVo);
             rs.setCode(1L);

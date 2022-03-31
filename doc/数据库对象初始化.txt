@@ -255,8 +255,6 @@ create table delivery_order(
 	user_id bigint(16) UNSIGNED not null  comment '订单创建人ID',
 	server_id bigint(16) UNSIGNED DEFAULT null  comment '订单骑手ID',
 
-	state tinyint(2) null default 0 comment'订单状态 2-已送达 1-配送中  0-取货中',
-
 	`create_gtm` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 	`update_gtm` datetime ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
 	`is_deleted` tinyint(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否删除',

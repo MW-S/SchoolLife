@@ -27,6 +27,6 @@ public class CarPO extends BasePO {
     /**
      * 用户ID
      */
-    private Long userId;
+/*    private Long userId;*/
    
 }

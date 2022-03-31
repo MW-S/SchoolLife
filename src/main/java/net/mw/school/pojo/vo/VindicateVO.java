@@ -20,7 +20,7 @@ public class VindicateVO extends BaseVO {
     /**
      * 内容
      */
-    private String contetn;
+    private String content;
 
     /**
      * 内容状态

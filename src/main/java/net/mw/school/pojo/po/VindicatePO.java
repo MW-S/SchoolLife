@@ -22,7 +22,7 @@ public class VindicatePO extends BasePO {
     /**
      * 内容
      */
-    private String contetn;
+    private String content;
 
     /**
      * 内容状态

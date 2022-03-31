@@ -25,6 +25,6 @@ public class CarVO extends BaseVO {
     /**
      * 用户ID
      */
-    private String userId;
+   /* private String userId;*/
    
 }

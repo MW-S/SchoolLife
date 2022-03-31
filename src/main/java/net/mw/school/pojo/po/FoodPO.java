@@ -7,7 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import net.mw.system.pojo.base.BasePO;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 /**
  * @Description 食物实体

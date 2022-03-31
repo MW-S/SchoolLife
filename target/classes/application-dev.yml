@@ -1,4 +1,19 @@
-﻿# 配置端口
+﻿#minio配置
+minio:
+   # bucket名称
+   bucket: school
+  # Minio服务地址
+  #minio.host= http://172.18.23.133:9001
+   host: http://172.18.17.196:9001
+   port: 9001
+  # 访问路径
+  #minio.url=  ${minio.host}/${minio.bucket}/
+   url:  /${minio.bucket}/
+  # MINIO_ACCESS_KEY
+   access-key: 110120119
+  # MINIO_SECRET_KEY
+   secret-key: 110120119
+# 配置端口
 server:
    port: 8090
 spring:
@@ -9,11 +24,11 @@ spring:
       multipart:
         max-request-size: 100MB
         max-file-size: 100MB
-   redis:
-      host: 127.0.0.1
-      port: 6379
-      database: 0
-      password: root
+#   redis:
+#      host: 127.0.0.1
+#      port: 6379
+#      database: 0
+#      password: root
    devtools:
       restart:
          enabled: true #设置开启热部署
@@ -81,9 +96,14 @@ pagehelper:
    supportMethodsArguments: true
    params: count=countSql
 logging:
+   file: mylogfile.log
+   path: logs
    level:
       net:
          mw: debu
+   pattern:
+      file: '%d{yyyy年-MM月-dd日 HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
+      console: '%d{yyyy年-MM月-dd日 HH:mm:ss.SSS} %-5level [%thread] %logger{15} - %msg%n'
 # ----------------
 # Orphan comments:
 # ----------------

@@ -29,5 +29,10 @@ public class SeatPO extends BasePO {
      */
     private String location;
 
+    /**
+     * 座位状态 1-已占用  0-空闲
+     */
+    private Boolean state;
+
    
 }

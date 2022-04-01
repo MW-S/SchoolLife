@@ -4,7 +4,7 @@ minio:
    bucket: school
   # Minio服务地址
   #minio.host= http://172.18.23.133:9001
-   host: http://172.18.17.196:9001
+   host: http://172.21.253.237:9001
    port: 9001
   # 访问路径
   #minio.url=  ${minio.host}/${minio.bucket}/

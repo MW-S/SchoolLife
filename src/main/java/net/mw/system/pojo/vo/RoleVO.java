@@ -1,15 +1,13 @@
 /**
  * 
  */
-package net.mw.system.pojo.po;
+package net.mw.system.pojo.vo;
 
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import net.mw.system.pojo.base.BasePO;
-
-import java.io.Serializable;
-import java.util.Date;
+import net.mw.system.pojo.base.BaseVO;
 
 /**
  * @Description
@@ -17,13 +15,12 @@ import java.util.Date;
  * @CrateTime 2020/3/2 12:22
  */
 @Data
-@TableName("role")
-public class RolePO extends BasePO {
+public class RoleVO extends BaseVO {
 	/**
 	 * 主键
 	 * 
 	 */
-	private Long id;
+	private String id;
 
 	/**
 	 * 角色名

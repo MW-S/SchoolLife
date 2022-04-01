@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.mw.system.dao.RoleDao;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ import org.springframework.util.CollectionUtils;
 import com.github.pagehelper.PageHelper;
 
 import net.mw.system.constant.UserRoleConstants;
-import net.mw.system.dao.RoleDao;
 import net.mw.system.dao.UserDao;
 import net.mw.system.pojo.po.RolePO;
 import net.mw.system.pojo.po.UserPO;

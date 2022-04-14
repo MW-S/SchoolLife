@@ -1,0 +1,21 @@
+<!-- 爱食堂nav菜品列表 -->
+<view class='hot'>
+  <view class='hot_title'>今日菜单 </view>
+  <view class='hot_list'>
+    <view class='list' wx:for="{{favorlist}}" wx:key="{{id}}">
+        <view class='list_l'>
+          <image src='{{item.pic}}'></image>
+        </view>
+        <view class='list_r'>
+          <view class='r_title'>{{item.name}}</view>
+          <view class='r_title'>{{typeText[item.type]}}</view>
+          <view class='bom'>
+            <view class='look'>{{item.floor}}</view>
+            <view class='price'>¥{{item.price}}</view>
+          </view>
+        </view>
+    </view>
+  </view>
+</view>
+<view class='footer'> —— 我是有底线的 —— </view>
+

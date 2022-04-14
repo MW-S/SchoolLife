@@ -1,0 +1,45 @@
+<!--pages/index/index.wxml-->
+<view class='container' style="min-height: 100vh;">
+  <!--轮播图 -->
+  <swiper class="screen-swiper swiper" indicator-dots='{{indicatorDots}}' autoplay='{{autoplay}}' interval='{{interval}}'
+    duration='{{duration}}' circular='{{circular}}'>
+    <swiper-item wx:for="{{imgUrls}}" wx:key='{{index}}'>
+      <image src="{{item}}"  mode="scaleToFill"></image>
+      <!-- <navigator url='{{item.link}}'>
+       
+      </navigator> -->
+    </swiper-item>
+  </swiper>
+
+
+  <view class='card' >
+    <navigator url='/pages/web/web?url={{url}}'>
+      <view class='card-desc text-caption'>今日推送</view>
+      <view class='card-content layout-row layout-start-center' style='height:120rpx;'>
+        <view style='color:white; height:inherit;min-width:120rpx;'
+          class='layout-column layout-center color{{week_index}}'>
+          {{week}}
+        </view>
+        <view class='text-body1' style="margin-left:30rpx;text-decoration:underline">
+          {{title}}
+        </view>
+      </view>
+    </navigator>
+  </view>
+  <view class='card' style='margin-top:30rpx;'>
+    <form bindsubmit="submit" report-submit="ture">
+      <view class='navs'>
+        <block wx:for="{{navs}}" wx:key="key">
+          <button data-key='{{item.key}}' data-verify="{{item.verify}}" data-path="{{item.path}}" class="form_button nav" form-type='submit'
+            plain="{{plain}}">
+            <image class="nav-icon" src="/images/index/{{item.key}}.png"></image>
+            <text class="nav-desc text-caption">{{item.desc}}</text>
+          </button>
+        </block>
+      </view>
+    </form>
+  </view>
+
+</view>
+
+<my-loading wx:if="{{loadModal}}"></my-loading>

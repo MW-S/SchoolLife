@@ -1,0 +1,16 @@
+<!-- 爱食堂nav菜品列表 -->
+<view class='hot'>
+  <view class='hot_title'>预约订单</view>
+  <view class='hot_list'>
+    <view class='list' wx:for="{{list}}" wx:key="{{id}}">
+        <view class='list_r'>
+          <view class='r_title'>座位：{{item.name}}</view>
+          <view class='r_title' style="color: #C83C32;">订单状态：{{stateText[item.state]}}</view>
+          <view class='r_title'>使用时间：{{item.useTime}}</view>
+          <view class='r_title'>创建时间：{{item.gmtCreate}}</view>
+        </view>
+    </view>
+  </view>
+</view>
+<view class='footer'> —— 我是有底线的 —— </view>
+

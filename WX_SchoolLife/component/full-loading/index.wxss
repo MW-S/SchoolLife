@@ -1,0 +1,11 @@
+@import "/colorui/main.wxss";
+@import "/colorui/icon.wxss";
+
+.mask_loading{
+  top: 0;
+  position: absolute;
+  background: #797979;
+  height: 100vh;
+  width: 100vw;
+  z-index: 990;
+}

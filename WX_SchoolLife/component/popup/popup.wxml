@@ -1,0 +1,44 @@
+<!--components/popup/popup.wxml 自定义组件 弹窗 -->
+
+<view class="popup-wrap" hidden="{{isShowPopup}}">
+    <view class="mask"></view>
+    <view class="popup-container">
+        <!-- <view class="popup-title"></view> -->
+        <view class="popup-content">
+            <text class="popup-txt">{{content}}</text>
+            <text class="popup-desc">{{desc}}</text>
+
+            <!-- 组件模板提供<slot> -->
+            <!-- <slot></slot> -->
+            
+            <!-- 外部样式类 -->
+            <!-- <text class="inner my-class">这段文本的颜色由组件外的 class 决定</text> -->
+        </view>
+        <view class="popup-footer">
+            <view class="commBtn cancle" bindtap="_errorCallback" wx:if="{{isShowBtn}}">{{cancelBtn}}</view>
+            <view class="commBtn confirm {{!isShowBtn  ? 'noTrue' : ''}}" bindtap="_successCallback">{{confirmBtn}}</view>
+        </view>
+    </view>
+</view>
+
+
+
+<!-- 在需要的组件中"使用流程" -->
+<!-- 
+    1. 在[.json]中引入组件
+        "usingComponents": {
+            "my-popup": "/components/popup/popup"
+        }
+
+    2. 在[.wxml]中使用, 根据需求操作属性
+        <my-popup id="popup"
+            bind:error= "_error"
+            bind:success= "_success"
+            content= "确认要退款吗？"
+            my-class="red-text"
+            isShowBtn= "{{false}}"
+            >
+
+            <text>插入slot中【根据需求】</text>
+        </my-popup>
+ -->

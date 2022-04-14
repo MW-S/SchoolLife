@@ -1,0 +1,6 @@
+
+		<view class="cu-load load-modal">
+			<image src="/images/send.png" mode="aspectFit"></image>
+			<view class="gray-text">加载中...</view>
+		</view>
+    <view class="mask_loading" ></view>

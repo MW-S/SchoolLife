@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="remind-box" wx:if="{{isLoading}}">
+    <image class="remind-img" src="{{fileServerUrl}}/images/loading.gif"></image>
+  </view>
+  <block wx:else>
+    <view>
+      <!-- <image class="title" src="/images/title.png"></image> -->
+      <view class="content">
+        <view class="hd" style="transform:rotateZ({{angle}}deg);">
+          <image class="wave" src="/images/wave.png" mode="aspectFill"></image>
+          <image class="wave wave-bg" src="/images/wave.png" mode="aspectFill"></image>
+        </view>
+        <view class="bd">
+          <form class="login-form"  catchreset="formReset">
+            <view>
+              <button  class="login-btn" bind:tap="login">微信一键登录</button>
+            </view>
+          </form>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

@@ -10,8 +10,9 @@
     "pages/vindicate/vindicate",
     "pages/note/note",
     "pages/goods/goods",
-    "pages/send/send",
-    "pages/temp/temp",
+    "pages/goods/temp/temp",
+    "pages/goods/send/send",
+    
 
      "pages/delivery/delivery",
      "pages/secondhandstore/secondhandstore",

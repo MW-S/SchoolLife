@@ -1,32 +1,31 @@
+const api = require('../../../utils/api.js');
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
+    item:{
 
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function(options) {
-    this.setData({
-      type:options.name
-    })
-    if (this.data.type == 'work') {
-      wx.setNavigationBarTitle({ title: '兼职' })
-    } else {
-      wx.setNavigationBarTitle({ title: '闲置物品' })
-    } 
-    var that = this
-    wx.getStorage({
-      key: 'info',
-      success: function(res) {
+    this.getById(options.id)
+  },
+  getById(id){
+    let that = this;
+    api.get("/goods/getGoodsById",{"id":id}).then(res=>{
+      if(res.code == 1){
+        res.data.data.pictures = JSON.parse(res.data.data.pictures);
         that.setData({
-          item: res.data
+          item: res.data.data
         })
       }
+    }).catch(res=>{
+      console.log(res);
     })
   },
   // 预览图片

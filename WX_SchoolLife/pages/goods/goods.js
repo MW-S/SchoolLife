@@ -1,4 +1,5 @@
-// const db = wx.cloud.database()
+
+const api = require('../../utils/api.js');
 Page({
 
   /**
@@ -6,13 +7,31 @@ Page({
    */
   data: {
     imgbox: [],
+    stateText: ["未出售", "已出售"],
     dataList: [{
       name: "xxx",
+      type: "鞋子",
       price: "100",
       info: "超级好的二手货",
-      fileIDs: ["../../img/add.png","../../img/add.png","../../img/add.png"],
-      sendTime: new Date().toJSON().replace('T', ' ').split('.')[0]
-    }]
+      pictures: ['../../img/add.png', '../../img/add.png', '../../img/add.png'],
+      state: 0,
+      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
+    },
+    {
+      name: "xxx",
+      type: "衣服",
+      price: "1001",
+      info: "超级好的二手货",
+      pictures: ["../../img/add.png","../../img/add.png","../../img/add.png"],
+      state: 1,
+      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
+    }
+  ],
+    total: 0,
+    page:{
+      page: 1,
+      size: 4
+    }
   },
 
   /**
@@ -20,6 +39,7 @@ Page({
    */
   onLoad: function(options) {
     var that = this
+    that.getList();
     wx.getStorage({
       key: 'openid',
       success: function(res) {
@@ -28,33 +48,12 @@ Page({
         })
       },
     })
-    // db.collection('xianzhi')
-    //   .orderBy('createTime', 'desc') //按发布视频排序
-    //   .get({
-    //     success(res) {
-    //       console.log("请求成功", res.data[0])
-    //       that.setData({
-    //         dataList: res.data
-    //       })
-    //     },
-    //     fail(res) {
-    //       console.log("请求失败", res)
-    //     }
-    //   })
+  
   },
   delete: function(e) {
-    var info = e.currentTarget.dataset.t
-    console.log(info)
-    // db.collection('xianzhi').doc(info._id).remove({
-    //   success: function(res) {
-    //     console.log(res.data)
-    //     wx.showToast({
-    //       icon: 'success',
-    //       title: '删除成功',
-    //     })
-    //   }
-    // })
-    this.onLoad()
+    let that = this;
+    that.del(e.currentTarget.dataset.id);
+    that.getList();
   },
   send: function() {
     wx.getStorage({
@@ -62,7 +61,7 @@ Page({
       success: function (res) {
         if (res.data) {
           wx.navigateTo({
-            url: '../send/send?name=xianzhi',
+            url: './send/send?name=xianzhi',
           })
         } else {
           wx.showToast({
@@ -80,14 +79,75 @@ Page({
     })
   },
   go: function(event) {
-    var info = event.currentTarget.dataset.id
-    wx.setStorage({
-      key: 'info',
-      data: info,
-    })
+    var id = event.currentTarget.dataset.id
+    // wx.setStorage({
+    //   key: 'goodsId',
+    //   data: id,
+    // })
     wx.navigateTo({
-      url: '../temp/temp?name=xianzhi',
+      url: './temp/temp?id=' + id,
     })
+  },
+  del(id){
+    wx.showLoading({title:"正在删除"})
+    let that = this;
+    var ids =  [id],
+    a ={a:12312}
+    api.post("/goods/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+      if(res.code == 1){
+        wx.showToast({
+          title: "发送成功"
+        })
+        that.getList();
+      }
+      wx.hideLoading()
+    }).catch(res=>{
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+      wx.hideLoading()
+    })
+  },
+  getList(type = 0){
+    let that = this;
+    api.get("/goods/getList", that.data.page).then(res=>{
+      if(res.code == 1){
+        var list = that.data.dataList;
+        var page = that.data.page;
+        if(type == 0){
+          list = [];
+          page.page = 1
+        }else{
+          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
+        }
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.pictures = JSON.parse(item.pictures);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          dataList: list,
+          total: res.data.total,
+          page: page
+        })
+      }
+    }).catch(res=>{
+      console.log(res);
+    })
+  },
+  formatDate(time){
+    var date = undefined,res ;
+    if(time == undefined || time == null){
+      date = new Date()
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }else{
+      date = new Date(time);
+      date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }
+    return res;
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -128,7 +188,9 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function() {
-
+    if(this.data.total > this.data.page.page * this.data.page.size ){
+      this.getList(1)
+    }
   },
 
   /**

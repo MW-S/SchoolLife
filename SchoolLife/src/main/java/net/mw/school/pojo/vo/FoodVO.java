@@ -27,6 +27,18 @@ public class FoodVO extends BaseVO {
 	private String name;
 
 	/**
+	 * 食物类型
+	 *
+	 */
+	private String type;
+
+	/**
+	 * 食物价格
+	 *
+	 */
+	private String price;
+
+	/**
 	 * 食物图片
 	 * 
 	 */

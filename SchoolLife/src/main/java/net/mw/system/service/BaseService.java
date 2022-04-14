@@ -1,5 +1,6 @@
 package net.mw.system.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import net.mw.system.pojo.po.UserPO;
 import net.mw.system.result.ResultMessage;
@@ -10,6 +11,8 @@ public interface BaseService <T> extends IService<T> {
 
 
     public ResultMessage getList(PageRequest page, UserPO user);
+
+    public ResultMessage getList(PageRequest page, QueryWrapper<T> queryWrapper, UserPO user);
 
     public ResultMessage getByPoId(Long id);
 

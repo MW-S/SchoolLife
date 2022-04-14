@@ -1,6 +1,6 @@
 package net.mw.school.controller;
 
-import net.mw.school.pojo.NoteViewVO;
+import net.mw.school.pojo.view.NoteViewVO;
 import net.mw.school.pojo.po.NotePO;
 import net.mw.school.pojo.vo.NoteVO;
 import net.mw.school.service.NoteService;
@@ -9,7 +9,6 @@ import net.mw.system.controller.BaseController;
 import net.mw.system.dao.UserDao;
 import net.mw.system.pojo.po.UserPO;
 import net.mw.system.result.ResultMessage;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

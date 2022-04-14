@@ -1,5 +1,6 @@
 package net.mw.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -102,6 +103,64 @@ public class BaseServiceImpl <M extends BaseMapper<T>, T, V> extends ServiceImpl
     }
 
     @Override
+    public ResultMessage getList(PageRequest page, QueryWrapper<T> queryWrapper, UserPO user) {
+        logger.trace("进入getList方法");
+        ResultMessage rs = new ResultMessage();
+        try {
+            if(!ObjectUtils.allNotNull(user)){
+                logger.debug("CurrentUser must not null!");
+                throw new IllegalArgumentException("CurrentUser must not null!");
+            }
+            Map<String,Object> data = new HashMap<String,Object>();
+            if(ObjectUtils.allNotNull(page)){
+                PageHelper.startPage(page.getPageNumber(), page.getPageSize());
+            }
+            List<T> pos = dao.list(queryWrapper);
+            List<V> vos = new ArrayList<>();
+            Class<?> cla =  getGenericClass(2);
+            pos.forEach((item)->{
+                V vo = null;
+                Method method = null;
+                try {
+                    vo = (V)cla.getDeclaredConstructor().newInstance();
+                    for(Method m: cla.getMethods()){
+                        if(m.getName().equals("poToVo")){
+                            method = m;
+                            break;
+                        }
+                    }
+                    method.invoke(vo,item);
+                    vos.add(vo);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            });
+            data.put("total", dao.count(queryWrapper));
+            data.put("size", vos.size());
+            data.put("list", vos);
+            rs.setData(data);
+            rs.setCode(1L);
+            rs.setMsg("获取成功!");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            rs.setMsg("参数不正确");
+            rs.setCode(2L);
+        } catch (Exception e) {
+            e.printStackTrace();
+            rs.setMsg("获取失败");
+            rs.setCode(0L);
+        }
+        logger.trace("退出getList方法");
+        return rs;
+    }
+
+    @Override
     public ResultMessage getByPoId(Long id) {
         logger.trace("进入 getById 方法");
         ResultMessage rs = new ResultMessage();
@@ -125,6 +184,7 @@ public class BaseServiceImpl <M extends BaseMapper<T>, T, V> extends ServiceImpl
                 method.invoke(resVo,resPo);
             }
             data.put("data",resVo);
+            rs.setData(data);
             rs.setCode(1L);
             rs.setMsg("获取成功!");
         } catch (IllegalArgumentException e) {

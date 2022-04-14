@@ -32,6 +32,18 @@ public class FoodPO extends BasePO {
 	private String name;
 
 	/**
+	 * 食物类型
+	 *
+	 */
+	private Integer type;
+
+	/**
+	 * 食物价格
+	 *
+	 */
+	private String price;
+
+	/**
 	 * 食物图片
 	 * 
 	 */

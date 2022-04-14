@@ -28,6 +28,26 @@ public class GoodsVO extends BaseVO {
     private String type;
 
     /**
+     * 价格
+     */
+    private String price;
+
+    /**
+     * 图片
+     */
+    private String pictures;
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 微信号
+     */
+    private String wechatId;
+
+    /**
      * 物品信息
      */
     private String info;

@@ -4,8 +4,8 @@
 </view>
 <view class="weui-panel__bd">
 <view class="myflex-wrp">
-  <view wx:for="{{listData}}" wx:for-item="list" wx:key="index" class="weui-media-box myflex-item weui-media-box_text" bind:tap="book">
-    <view class="weui-media-box__title weui-media-box__title_in-text">{{teachBuilding}}{{list}}</view>
+  <view wx:for="{{list}}"  wx:key="index" class="weui-media-box myflex-item weui-media-box_text" data-id="{{item.id}}" bind:tap="book">
+    <view class="weui-media-box__title weui-media-box__title_in-text">{{item.location}}-{{item.code}}</view>
   </view>
 </view>
   <view class="button-sp-area">
@@ -19,7 +19,7 @@
   title="选择预约时间"
   show="{{ show }}"
   show-cancel-button
-  bind:confirm="onClose"
+  bind:confirm="selectTime"
   bind:close="onClose"
 >
   <van-picker  columns="{{ columns }}" bind:change="onChange" />

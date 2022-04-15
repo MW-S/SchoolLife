@@ -1,47 +1,45 @@
 // pages/shophelper/shophelper.js
 const app = getApp();
 const webUtil = require("../../utils/web.js");
+const api = require('../../utils/api.js');
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    total: 0,
+    page:{
+      page: 1,
+      size: 4
+    },
+    array: ["官渡校区", "西城校区", "光华校区"],
+    vo: {
+      school: 0
+    },
     navSelectIndex:0,
     shophelper0: [],
     shophelper1: [],
     list:[{
-      avatarurl: "/img/goods.png",
-      name: "xxx",
-      sex: "男",
-      money: 100,
-      friendly_time: new Date().toJSON().replace('T', ' ').split('.')[0],
-      goods: "可比克薯片",
-      addr: "阿拉斯加",
-      status: 0
+      avatar: "/img/goods.png",
+      user: "xxx",
+      name: "可比克薯片",
+      address: "阿拉斯加",
+      price: 100,
+      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+      tag: "",
+      state: 0
     },
     {
-      avatarurl: "/img/goods.png",
-      name: "xxx",
-      sex: "女",
-      money: 100,
-      friendly_time: new Date().toJSON().replace('T', ' ').split('.')[0],
-      goods: "可比克薯片",
-      addr: "阿拉斯加",
-      status: 1
-    }],
-    info: {
-      id: 0,
-      goods: "",
-      addr: "",
-      sex: "男",
-      name: "",
-      avatarurl: "",
-      contact: "",
-      money: 3,
-      time: "",
-      status: 0,
-    }
+      avatar: "/img/goods.png",
+      user: "xxx",
+      name: "可比克薯片",
+      address: "阿拉斯加",
+      price: 100,
+      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+      tag: "",
+      state: 1
+    }]
   },
   formatTime(e){
     if(e == undefined)
@@ -56,14 +54,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    //将时间变成友好时间显示   
-    // let shophelper0 = this.formatTime(app.globalData.shophelper0);
-    // let shophelper1 = this.formatTime(app.globalData.shophelper1);
-    // this.setData({
-    //   shophelper0: shophelper0,
-    //   shophelper1: shophelper1,
-    //   list: shophelper0,
-    // })
+    this.getList();
   },
   selectNav: function (e) {
     var that = this;
@@ -81,78 +72,114 @@ Page({
       showformbox: val == 1 ? true : false
     })
   },
-  saveFormboxcontent: function (e) {
-    let index = this.data.navSelectIndex;
-    let info = this.data.info;
-    //设置当前时间
-    info.time = Date.parse(new Date());
-    info.name = app.globalData.userInfo.nickName;
-    info.avatarurl = app.globalData.userInfo.avatarUrl;
-    info.sex = app.globalData.userInfo.gender==1?'男':'女';
-    info.index=index;//区分南北校区
-    let list = [];
-   
-    if (index == 0) {  //南校区
-      list = this.data.shophelper0;
-    } else {//北校区
-       list = this.data.shophelper1;   
-    }
-    let id = list.length;
-    list.forEach((val, index) => {
-      if (val.id == id) {
-        id++;
-      }
-    })
-
-    info.id = id;
-    info.friendly_time = webUtil.friendly_time(info.time);
-    console.log(info);
-
-    //加入到头部
-    list.unshift(info);
-
-    if(index==0){
-      //更新数据 更新缓存
-      this.setData({
-        list: list,
-        shophelper0: list
-      })
-
-      wx.setStorageSync("shophelper0", list);
-      app.globalData.shophelper0 = list;
-
-    }else{
-      //更新数据 更新缓存
-      this.setData({
-        list: list,
-        shophelper1: list
-      })
-
-      wx.setStorageSync("shophelper1", list);
-      app.globalData.shophelper1 = list;
-    }
-    console.log(list);
-
+  //绑定信息
+  bindVal(e){
+    var val = e.detail.value;
+    var field = e.currentTarget.dataset.field
     this.setData({
-      showformbox:false
-    }) 
-
-    //____________________________
-    //更改我的跑腿代购
-    let myShophelp = wx.getStorageSync("myShophelp") || [];
-    myShophelp.unshift(info);
-    wx.setStorageSync("myShophelp", myShophelp);
+      [field]: val
+    })
   },
-  infomodify: function (e) {
-    let val = e.detail.value;
-    let col = e.currentTarget.dataset.col;
-
-    let data = "{\"info." + col + "\":\"" + val + "\"}";
-    console.log(data);
-
-    data = JSON.parse(data);
-
-    this.setData(data);
+  select(e){
+    let id = e.currentTarget.dataset.id;
+    this.save({id: id, serverId: wx.getStorageSync("user").id, state: 1})
+  },
+  delete: function (e) {
+    let that = this;
+    that.del(e.currentTarget.dataset.id);
+    that.getList();
+  },
+  del(id){
+    wx.showLoading({title:"正在删除"})
+    let that = this;
+    var ids =  [id],
+    a ={a:12312}
+    api.post("/deliveryOrder/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+      if(res.code == 1){
+        wx.showToast({
+          title: "删除成功"
+        })
+        that.getList();
+      }
+      wx.hideLoading()
+    }).catch(res=>{
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+      wx.hideLoading()
+    })
+  },
+  push(e){
+    this.save(undefined);
+  },
+  save(vo){
+    wx.showLoading({title:"正在发布"})
+    let that = this;
+    if(vo == undefined){
+      vo = that.data.vo
+      vo.userId = wx.getStorageSync("user").id
+    }
+    api.post("/deliveryOrder/save", vo, 1).then(res=>{
+      wx.hideLoading();
+      if(res.code == 1){
+        wx.showToast({
+          title: "发布成功"
+        })
+        that.setData({
+          showformbox: false
+        })
+        that.getList();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+    })
+  },
+  getList(type = 0){
+    wx.showLoading({title:"正在加载"})
+    let that = this;
+    api.get("/deliveryOrder/getList", that.data.page).then(res=>{
+      if(res.code == 1){
+        var list = that.data.dataList;
+        var page = that.data.page;
+        if(type == 0){
+          list = [];
+          page.page = 1
+        }else{
+          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
+        }
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          list: list,
+          total: res.data.total,
+          page: page
+        })
+        wx.hideLoading();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
+    })
+  },
+  formatDate(time){
+    var date = undefined,res ;
+    if(time == undefined || time == null){
+      date = new Date()
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }else{
+      date = new Date(time);
+      date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }
+    return res;
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

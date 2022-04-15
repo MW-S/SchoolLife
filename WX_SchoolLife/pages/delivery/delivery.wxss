@@ -171,4 +171,13 @@ color: rgb(17, 148, 35);
    text-align: center;
 }
 
+.form-box picker{
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 10rpx;
+  box-shadow: 1px 1px 2px 1px  rgb(63, 159, 214);
+  padding-left: 10rpx;
+  margin-top: 20rpx;
+}
+
 

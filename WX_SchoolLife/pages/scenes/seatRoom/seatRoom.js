@@ -1,6 +1,5 @@
 const app = getApp()
-import api from '../../../utils/util.js'
-
+const api = require('../../../utils/api.js');
 Page({
 
   /**
@@ -60,12 +59,11 @@ Page({
   },
   searchRoom: function () {
         wx.navigateTo({
-          url: './search/search?schoolAreaIndex=' + this.data.schoolAreaIndex +
+          url: './search/search?school=' + this.data.schoolAreaIndex +
            '&floorIndex=' + this.data.floorIndex +
-           '.&roomIndex=' + this.data.roomIndex 
+           '.&location=' + this.data.room[this.data.floorIndex][this.data.roomIndex] 
         })
   },
-
   /**
    * 生命周期函数--监听页面加载
    */

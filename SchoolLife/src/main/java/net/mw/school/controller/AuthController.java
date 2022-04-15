@@ -33,7 +33,8 @@ public class AuthController {
 	 * log4j实例对象.
 	 */
 	private static Logger logger = LogManager.getLogger(AuthController.class);
-	
+
+	public static final String LOGIN_TOKEN_KEY = "Authorization";
 
     @Autowired
     private UserService service;
@@ -46,7 +47,6 @@ public class AuthController {
     public ResultMessage info(HttpServletRequest request, @CurrentUser UserPO currentUser){
 		logger.trace("进入info方法");
 		ResultMessage rs;
-		logger.info(currentUser.getId());
 		if(!ObjectUtils.allNotNull(currentUser)){
 			rs = new ResultMessage();
 			rs.setCode(403L);
@@ -83,4 +83,34 @@ public class AuthController {
 		logger.trace("退出login方法");
 		return rs;
     }
+
+	@GetMapping(value = "/isLogin")
+	public ResultMessage isLogin(HttpServletRequest request){
+		logger.trace("进入 isLogin 方法");
+		ResultMessage rs= new ResultMessage();
+		String authorization = request.getHeader(LOGIN_TOKEN_KEY);
+		Boolean isContinue = true;
+		String token = null ;
+		isContinue = ObjectUtils.allNotNull(authorization);
+		if(isContinue){
+			token =  authorization.split("Bearer ")[1];
+			isContinue = isContinue && ObjectUtils.allNotNull(token);
+		}
+		if(isContinue){
+			isContinue = jwtTokenUtils.validateToken(token);
+			isContinue =  isContinue && !jwtTokenUtils.isTokenExpired(token);
+		}
+		rs.setCode(isContinue?1L:403L);
+		rs.setMsg(isContinue?"已登录":"未登录");
+		logger.trace("退出 isLogin 方法");
+		return rs;
+	}
+
+	@GetMapping(value = "/getCode")
+	public ResultMessage getCode(){
+		logger.trace("进入 getCode 方法");
+		ResultMessage rs=service.logout();
+		logger.trace("退出 getCode 方法");
+		return rs;
+	}
 }

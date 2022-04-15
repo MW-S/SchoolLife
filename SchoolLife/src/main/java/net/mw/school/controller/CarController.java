@@ -6,6 +6,7 @@ import net.mw.school.service.CarService;
 import net.mw.system.annotation.CurrentUser;
 import net.mw.system.pojo.po.UserPO;
 import net.mw.system.result.ResultMessage;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,14 @@ public class CarController {
     private CarService service;
 
     @GetMapping(value = "/getList")
-    public ResultMessage getList(@RequestParam("page") int page, @RequestParam("size") int size
+    public ResultMessage getList(@RequestParam(value="page", required=false) Integer page,
+			@RequestParam(value="size",required=false) Integer size
 			, @CurrentUser UserPO user){
 		logger.trace("进入getList方法");
-		PageRequest pageVo = new PageRequest(page, size);
+		PageRequest pageVo = null;
+		if(ObjectUtils.allNotNull(page,size)){
+			pageVo =  PageRequest.of(page, size);
+		}
 		ResultMessage rs=service.getList(pageVo, user);
 		logger.trace("退出getList方法");
 		return rs;

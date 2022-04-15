@@ -54,6 +54,8 @@ public interface UserService {
 	public ResultMessage getById(Long id);
 	
 	public ResultMessage update(UserPO po);
+
+    public ResultMessage updateCarId(UserPO po);
 	
 	public ResultMessage del(UserPO po);
    

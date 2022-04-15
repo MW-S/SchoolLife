@@ -6,6 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import net.mw.school.dao.NoteDao;
+import net.mw.school.dao.VindicateDao;
+import net.mw.school.pojo.po.NotePO;
+import net.mw.school.pojo.po.VindicatePO;
 import net.mw.system.dao.RoleDao;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -55,6 +61,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private RoleDao roleDao;
+
+	@Autowired
+	private NoteDao noteDao;
+
+	@Autowired
+	private VindicateDao vindicateDao;
 	
     @Override
     public ResultMessage login(UserPO po) {
@@ -84,7 +96,6 @@ public class UserServiceImpl implements UserService {
 					Map<String,Object> credentials = new HashMap<String,Object>();
 					credentials.put("user",queryPo.getUserName());
 					credentials.put("password",po.getPassword());
-					
 /*					Encrypt.setTempSalt(pos.get(0).getSalt());
 					// 内部登录请求
 		            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken( po.getUserName()
@@ -240,7 +251,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public ResultMessage getById(Long id) {
-		logger.trace("进入getMyProject方法");
+		logger.trace("进入 getById 方法");
     	ResultMessage rs = new ResultMessage();
 		try {
 			Map<String,Object> data = new HashMap<String,Object>();
@@ -255,6 +266,10 @@ public class UserServiceImpl implements UserService {
 //			userVo.setRoles(roleVos);
 			UserVO resVo = new UserVO();
 			resVo.poToVo(resPo);
+			Long noteCount = noteDao.selectCount(new QueryWrapper<NotePO>().eq("user_id", resVo.getId()));
+			Long vindicateCount = vindicateDao.selectCount(new QueryWrapper<VindicatePO>().eq("user_id", resVo.getId()));
+			data.put("noteCount",noteCount.toString());
+			data.put("vindicateCount",vindicateCount.toString());
 			data.put("data",resVo);
 			data.put("roles", roleVos);
 			rs.setData(data);
@@ -269,7 +284,7 @@ public class UserServiceImpl implements UserService {
 			rs.setMsg("获取失败");
 			rs.setCode(0L);
 		}
-		logger.trace("退出getMyProject方法");
+		logger.trace("退出 getById 方法");
 		return rs;
 	}
 
@@ -301,6 +316,32 @@ public class UserServiceImpl implements UserService {
 		return rs;
 	}
 
+	@Override
+	public ResultMessage updateCarId(UserPO po) {
+		logger.trace("进入update方法");
+		ResultMessage rs = new ResultMessage();
+		try {
+			UserPO lastPo =dao.getUserById(po.getId());
+			lastPo.setCarId(po.getCarId());
+			if(dao.updateCarId(po) > 0 ) {
+				rs.setCode(1L);
+				rs.setMsg("修改成功!");
+			}else {
+				rs.setCode(1L);
+				rs.setMsg("修改失败!");
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			rs.setMsg("参数不正确");
+			rs.setCode(2L);
+		} catch (Exception e) {
+			e.printStackTrace();
+			rs.setMsg("修改失败");
+			rs.setCode(0L);
+		}
+		logger.trace("退出update方法");
+		return rs;
+	}
 	@Override
 	public ResultMessage del(UserPO po) {
 		logger.trace("进入del方法");

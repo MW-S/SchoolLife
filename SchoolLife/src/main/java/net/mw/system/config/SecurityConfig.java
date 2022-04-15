@@ -136,7 +136,11 @@ public class SecurityConfig  extends WebSecurityConfigurerAdapter{
 		// 放行druid
 		.antMatchers("/druid/**").permitAll()
 		//允许匿名及登录用户访问
-		.antMatchers("/auth/**", "/error/**").permitAll()
+		.antMatchers("/error/**").permitAll()
+		.antMatchers("/auth/login").permitAll()
+		.antMatchers("/auth/isLogin").permitAll()
+		.antMatchers("/auth/logout").permitAll()
+		.antMatchers("/auth/register").permitAll()
 		.anyRequest().authenticated()
 //		.and().formLogin().defaultSuccessUrl(springboot+"/user/loginSuccess").loginPage(vue).loginProcessingUrl(springboot+"/user/login")//配置登录、登录页面、登录请求URL
 //		.usernameParameter("username").passwordParameter("password")//自定义登录参数

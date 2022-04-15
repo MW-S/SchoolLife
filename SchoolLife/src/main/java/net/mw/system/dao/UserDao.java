@@ -43,7 +43,10 @@ public interface UserDao {
     @Insert("update user set name = #{name}, type = #{type} , gender = #{gender}, phone = #{phone}, state = #{state} " +
             " where id = #{id}")
     public Integer update(UserPO po);
-    
+
+    @Insert("update user set carId = #{carId} where id = #{id}")
+    public Integer updateCarId(UserPO po);
+
     @Insert("update user set password = #{password} , salt = #{salt}" +
             " where id = #{id}")
     public Integer resetPwd(UserPO po);

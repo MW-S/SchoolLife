@@ -5,14 +5,14 @@ import lombok.Data;
 import net.mw.system.pojo.base.BasePO;
 
 /**
- * @Description 图书馆座位预约实体
+ * @Description 图书馆座位实体
  * @author W_Messi
  * @CreateTime 2022/3/27 22:23
  *
  */
 @Data
-@TableName("seat_order")
-public class SeatOrderPO extends BasePO {
+@TableName("class_room")
+public class ClassRoomPO extends BasePO {
 
     /**
      * 主键
@@ -20,24 +20,24 @@ public class SeatOrderPO extends BasePO {
     private Long id;
 
     /**
-     * 使用人ID
+     * 教室号
      */
-    private Long userId;
+    private String code;
 
     /**
-     * 座位ID
+     * 所在楼
      */
-    private Long seatId;
+    private String location;
 
     /**
-     * 使用时长
+     * 所在校区
      */
-    private String useTime;
+    private Integer school;
 
     /**
-     * 订单状态
+     * 教室状态 1-已占用  0-空闲
      */
-    private Integer state;
+    private Boolean state;
 
    
 }

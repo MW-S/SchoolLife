@@ -4,13 +4,13 @@ import lombok.Data;
 import net.mw.system.pojo.base.BaseVO;
 
 /**
- * @Description 图书馆座位预约实体
+ * @Description 图书馆座位实体
  * @author W_Messi
  * @CreateTime 2022/3/27 22:23
  *
  */
 @Data
-public class SeatOrderVO extends BaseVO {
+public class ClassRoomVO extends BaseVO {
 
     /**
      * 主键
@@ -18,24 +18,23 @@ public class SeatOrderVO extends BaseVO {
     private String id;
 
     /**
-     * 使用人ID
+     * 教室号
      */
-    private String userId;
+    private String code;
 
     /**
-     * 座位ID
+     * 所在楼
      */
-    private String seatId;
+    private String location;
 
     /**
-     * 订单状态
+     * 所在校区
+     */
+    private String school;
+
+    /**
+     * 状态 1-已占用  0-空闲
      */
     private String state;
-
-    /**
-     * 使用时长
-     */
-    private String useTime;
-
    
 }

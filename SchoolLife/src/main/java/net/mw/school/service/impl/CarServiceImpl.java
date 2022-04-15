@@ -49,8 +49,9 @@ public class CarServiceImpl extends ServiceImpl<CarDao, CarPO> implements CarSer
 				throw new IllegalArgumentException("CurrentUser must not null!");
 			}
 			Map<String,Object> data = new HashMap<String,Object>();
-			PageHelper.startPage(page.getPageNumber(), page.getPageSize());
-
+			if(ObjectUtils.allNotNull(page) && ObjectUtils.allNotNull(page.getPageNumber(), page.getPageSize())){
+				PageHelper.startPage(page.getPageNumber(), page.getPageSize());
+			}
 			List<CarPO> pos = dao.list();
 			List<CarVO> vos = new ArrayList<>();
 			pos.forEach((item)->{

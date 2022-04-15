@@ -62,8 +62,15 @@ public class UserController {
 		logger.trace("退出add方法");
 		return rs;
     }
-    
-    
+
+	@PostMapping(value = "/updateCarId")
+	public ResultMessage updateCarId(@RequestBody UserVO vo){
+		logger.trace("进入 updateCarId 方法");
+		UserPO po = vo.voToPo(UserPO.class);
+		ResultMessage rs=service.updateCarId(po);
+		logger.trace("退出 updateCarId 方法");
+		return rs;
+	}
     
     @PostMapping(value = "/del")
     public ResultMessage del(@RequestBody UserVO vo){

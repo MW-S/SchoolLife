@@ -77,7 +77,13 @@ public class UserPO implements Serializable  {
 	 * 状态 0是正常 1是禁用
 	 */
 	private Integer state;
-	
+
+	/**
+	 * 车辆ID
+	 *
+	 */
+	private String carId;
+
 	/**
 	 *创建时间
 	 */

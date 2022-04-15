@@ -26,10 +26,13 @@ page, .page, .page__bd {
 }
 
 .weui-media-box {
-  padding: 10px;
-  margin-top: 10px;
   position: relative;
   background-color: #fff;
+  margin: 10px;
+  padding: 10px;
+  position: relative;
+  background-color: #fff;
+  box-shadow: 10px 10px 5px #888888;
 }
 
 .weui-media-box__title_in-text {
@@ -92,4 +95,14 @@ button[type="default"][plain] {
   -webkit-flex: auto;
   width: 40%;
   flex: auto;
+}
+
+.noneClass{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 80%;
+  margin: 10%;
+  font-size: x-large;
 }

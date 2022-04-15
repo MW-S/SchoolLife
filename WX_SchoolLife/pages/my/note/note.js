@@ -1,60 +1,40 @@
 // const db = wx.cloud.database()
 var util = require('../../util/util.js');
+const api = require('../../../utils/api.js');
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    userId: wx.getStorageSync("user").id,
     isSend: false,
-    dataList: []
+    dataList: [],
+    vo:{
+      userId: wx.getStorageSync("user").id
+    },
+    note:{
+      content:''
+    },
+    total: 0,
+    page:{
+      page: 1,
+      size: 4
+    }
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    var that = this
-    wx.getStorage({
-      key: 'openid',
-      success: function (res) {
-        that.setData({
-          openid: res.data
-        })
-      },
-    })
-    // db.collection('biaobai')
-    //   .orderBy('createTime', 'desc') //按发布时间排序
-    //   .get({
-    //     success(res) {
-    //       console.log("请求成功", res.data[0].info)
-    //       that.setData({
-    //         dataList: res.data
-    //       })
-    //       console.log(that.data.dataList[0])
-    //     },
-    //     fail(res) {
-    //       console.log("请求失败", res)
-    //     }
-    //   })
+
+    this.getList();
   },
   //获取输入内容
-  getInput1(event) {
-    console.log("输入的对象", event.detail.value)
-    this.setData({
-      to: event.detail.value
-    })
-  },
-  getInput2(event) {
-    console.log("输入的称呼", event.detail.value)
-    this.setData({
-      writer: event.detail.value
-    })
-  },
   getInput3(event) {
     console.log("输入的内容", event.detail.value)
     this.setData({
-      info: event.detail.value
+      ['note.content']: event.detail.value
     })
   },
   //打开弹窗
@@ -91,9 +71,8 @@ Page({
   //上传数据
   publish: function () {
     var that = this;
-    let name = wx.getStorageSync("user").name;
-    let info = this.data.info
-    if (!info || info.length < 6) {
+    let content = that.data.note.content
+    if (!content || content.length < 6) {
       wx.showToast({
         icon: "none",
         title: '内容要多于六个字'
@@ -103,94 +82,100 @@ Page({
     wx.showLoading({
       title: '发布中...',
     })
-    var sendTime = util.formatTime(new Date())
-    this.data.dataList.push({
-      name,
-      info,
-      sendTime
-    })
-    this.setData({
-      dataList: this.data.dataList
-    })
-    this.close()
+    that.save();
+    that.close()
     wx.hideLoading();
-    
-    // wx.cloud.callFunction({
-    //   name: 'love',
-    //   data: {
-    //     info: this.data.info,
-    //     to: this.data.to,
-    //     writer: this.data.writer,
-    //     sendTime: util.formatTime(new Date())
-    //   },
-    //   success: res => {
-    //     wx.hideLoading()
-    //     wx.showToast({
-    //       title: '发布成功',
-    //     })
-    //     console.log('发布成功', res)
-    //     this.setData({
-    //       isSend: false
-    //     })
-    //     this.onLoad()
-    //     this.setData({
-    //       to: null,
-    //       writer: null,
-    //       info: null
-    //     })
-    //   },
-    //   fail: err => {
-    //     wx.hideLoading()
-    //     wx.showToast({
-    //       icon: 'none',
-    //       title: '网络不给力....'
-    //     })
-    //     console.error('发布失败', err)
-    //   }
-    // })
-    // db.collection('biaobai').add({
-    //   data: {
-    //     createTime: new Date(),
-    //     info: this.data.info,
-    //     to: this.data.to,
-    //     writer: this.data.writer,
-    //     sendTime: util.formatTime(new Date())
-    //   },
-    //   success: res => {
-    //     wx.hideLoading()
-    //     wx.showToast({
-    //       title: '发布成功',
-    //     })
-    //     console.log('发布成功', res)
-    //     this.setData({
-    //       isSend: false
-    //     })
-    //     this.onLoad()
-    //   },
-    //   fail: err => {
-    //     wx.hideLoading()
-    //     wx.showToast({
-    //       icon: 'none',
-    //       title: '网络不给力....'
-    //     })
-    //     console.error('发布失败', err)
-    //   }
-    // })
-
   },
   delete: function (e) {
-    var info = e.currentTarget.dataset.t
-    console.log(info)
-    // db.collection('biaobai').doc(info._id).remove({
-    //   success: function (res) {
-    //     console.log(res.data)
-    //     wx.showToast({
-    //       icon: 'success',
-    //       title: '删除成功',
-    //     })
-    //   }
-    // })
-    this.onLoad()
+    let that = this;
+    that.del(e.currentTarget.dataset.id);
+    that.getList();
+  },
+  del(id){
+    wx.showLoading({title:"正在删除"})
+    let that = this;
+    var ids =  [id],
+    a ={a:12312}
+    api.post("/note/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+      if(res.code == 1){
+        wx.showToast({
+          title: "发送成功"
+        })
+        that.getList();
+      }
+      wx.hideLoading()
+    }).catch(res=>{
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+      wx.hideLoading()
+    })
+  },
+  save(){
+    let that = this;
+    var note = {
+      content: that.data.note.content,
+      userId: wx.getStorageSync("user").id
+    }
+    api.post("/note/save", note, 1).then(res=>{
+      if(res.code == 1){
+        wx.showToast({
+          title: "发送成功"
+        })
+        that.getList();
+      }
+    }).catch(res=>{
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+    })
+  },
+  getList(type = 0){
+    wx.showLoading({title:"正在加载...."})
+    let that = this;
+    api.post("/note/getListByVo",
+     {"page": that.data.page.page,
+     "size": that.data.page.size,
+       "aimVo": JSON.stringify(that.data.vo)}
+    , 0 , 0).then(res=>{
+      if(res.code == 1){
+        var list = that.data.dataList;
+        var page = that.data.page;
+        if(type == 0){
+          list = [];
+          page.page = 1
+        }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          dataList: list,
+          total: res.data.total,
+          page: page
+        })
+      }
+      wx.hideLoading();
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
+    })
+  },
+  formatDate(time){
+    var date = undefined,res ;
+    if(time == undefined || time == null){
+      date = new Date()
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }else{
+      date = new Date(time);
+      date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }
+    return res;
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -203,7 +188,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    // this.getList()
   },
 
   /**
@@ -231,7 +216,10 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if(this.data.total > this.data.dataList.length ){
+      this.getList(1)
+    }
+    
   },
 
   /**

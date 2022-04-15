@@ -15,9 +15,6 @@
     
 
      "pages/delivery/delivery",
-     "pages/secondhandstore/secondhandstore",
-     "pages/secondhandstore/detail/detail",
-     "pages/secondhandstore/detail/chat/chat",
 
      "pages/scenes/classRoom/classRoom",
      "pages/scenes/classRoom/search/search",

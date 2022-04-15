@@ -12,15 +12,23 @@ Page({
       page: 1,
       size: 10
     },
+    queryVo: {
+      userId: wx.getStorageSync("user").id
+    },
     total: 0
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: async function (options) {
     var that = this
-    that.getList();
+    var userId = options.userId;
+    if(userId != undefined){
+      await that.getListByVo();
+    }else{
+      await that.getList();
+    }
     wx.getStorage({
       key: 'user',
       success: function (res) {
@@ -187,6 +195,37 @@ Page({
       console.log(res);
     })
   },
+  getListByVo(type = 0){
+    let that = this;
+    api.post("/vindicate/getListByVo",
+     {"page": that.data.page.page,
+     "size": that.data.page.size,
+       "aimVo": JSON.stringify(that.data.queryVo)}
+    , 0 , 0).then(res=>{
+      if(res.code == 1){
+        var list = that.data.dataList;
+        var page = that.data.page;
+        if(type == 0){
+          list = [];
+          page.page = 1
+        }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
+        
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          dataList: list,
+          total: res.data.total,
+          page: page
+        })
+      }
+    }).catch(res=>{
+      console.log(res);
+    })
+  },
   formatDate(time){
     var date = undefined,res ;
     if(time == undefined || time == null){
@@ -238,7 +277,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    if(this.data.total > this.data.page.page * this.data.page.size ){
+    if(this.data.total > this.data.dataList.length ){
       this.getList(1)
     }
   },

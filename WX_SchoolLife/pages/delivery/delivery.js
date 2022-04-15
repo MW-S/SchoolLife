@@ -149,9 +149,9 @@ Page({
         if(type == 0){
           list = [];
           page.page = 1
-        }else{
-          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
         }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
+        
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.gmtCreate = tmp;
@@ -224,7 +224,9 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-
+    if(this.data.total > this.data.list.length ){
+      this.getList(1)
+    }
   },
 
   /**

@@ -28,8 +28,9 @@ Page({
     
   },
   buildPicker: function (e) {
+    var field =  e.currentTarget.dataset.field
     this.setData({
-      buildIndex: e.detail.value
+      [field]: e.detail.value
     })
   },
   checkboxChange: function (e) {
@@ -48,7 +49,8 @@ Page({
   },
   searchRoom: function () {
         wx.navigateTo({
-          url: './search/search?build=' + this.data.build[this.data.buildIndex] 
+          url: './search/search?school=' + this.data.schoolAreaIndex +
+          '&location=' + this.data.build[this.data.buildIndex]
         })
   },
 

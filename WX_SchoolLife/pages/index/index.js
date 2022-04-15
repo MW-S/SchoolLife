@@ -105,6 +105,8 @@ Page({
     api.get("/auth/info").then(res=>{
       if(res.code == 1){
         wx.setStorageSync('user', res.data.data)
+        wx.setStorageSync("noteCount", res.data.noteCount)
+        wx.setStorageSync("vindicateCount", res.data.vindicateCount)
       }
     }).catch(res=>{
       console.log(res);

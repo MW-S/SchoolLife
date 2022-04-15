@@ -37,7 +37,8 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: async function (options) {
+    await this.isLogin();
     var isLogin = wx.getStorageSync("login");
     if(isLogin == true){
       wx.switchTab({url:"/pages/index/index"})
@@ -153,7 +154,25 @@ Page({
 
   },
 
-
+  isLogin(){
+    let that = this;
+    wx.showLoading({
+      title: 'Loading...', //提示的内容,
+    });
+    
+    api.get("/auth/isLogin").then(res=>{
+      if(res.code == 1){
+        wx.setStorageSync('login', true);
+      }else{
+        wx.setStorageSync('login', false);
+      }
+      wx.hideLoading();
+    }).catch(res=>{
+      wx.setStorageSync('login', false);
+      wx.hideLoading();
+      console.log(res)
+    })
+  },
   // 登录
   login(e) {
     wx.getUserProfile({

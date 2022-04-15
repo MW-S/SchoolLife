@@ -73,3 +73,11 @@
   font-size: 30rpx;
   margin: 30rpx;
 }
+
+.cancel_btn{
+  color: #C83C32;
+  float: right;
+  border: 1rpx solid rgb(145, 162, 173);
+  padding: 5px;
+  box-shadow: 10rpx 10rpx 10rpx rgb(145, 162, 173);
+}

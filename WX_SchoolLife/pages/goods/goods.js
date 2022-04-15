@@ -8,6 +8,7 @@ Page({
   data: {
     imgbox: [],
     stateText: ["未出售", "已出售"],
+    vo:{userId: wx.getStorageSync("user").id},
     dataList: [{
       name: "xxx",
       type: "鞋子",
@@ -31,24 +32,24 @@ Page({
     page:{
       page: 1,
       size: 4
-    }
+    },
+    userId: undefined
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function(options) {
+  onLoad: async function(options) {
     var that = this
-    that.getList();
-    wx.getStorage({
-      key: 'openid',
-      success: function(res) {
-        that.setData({
-          openid: res.data
-        })
-      },
-    })
-  
+    var userId = options.userId;
+    if(userId != undefined){
+      that.setData({
+        userId: userId
+      })
+      await that.getListByVo();
+    }else{
+      await that.getList();
+    }
   },
   delete: function(e) {
     let that = this;
@@ -119,8 +120,40 @@ Page({
           list = [];
           page.page = 1
         }else{
-          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
+          page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         }
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.pictures = JSON.parse(item.pictures);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          dataList: list,
+          total: res.data.total,
+          page: page
+        })
+      }
+    }).catch(res=>{
+      console.log(res);
+    })
+  },
+  getListByVo(type = 0){
+    let that = this;
+    api.post("/goods/getListByVo",
+     {"page": that.data.page.page,
+     "size": that.data.page.size,
+       "aimVo": JSON.stringify(that.data.vo)}
+    , 0 , 0).then(res=>{
+      if(res.code == 1){
+        var list = that.data.dataList;
+        var page = that.data.page;
+        if(type == 0){
+          list = [];
+          page.page = 1
+        }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
+        
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.pictures = JSON.parse(item.pictures);
@@ -160,7 +193,13 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function() {
-    this.onLoad()
+    // this.onLoad()
+    if(this.data.userId == undefined){
+      this.getList()
+    }else{
+      this.getListByVo()
+    }
+    
   },
 
   /**
@@ -188,8 +227,12 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function() {
-    if(this.data.total > this.data.page.page * this.data.page.size ){
-      this.getList(1)
+    if(this.data.total > this.data.dataList.length ){
+      if(this.data.userId == undefined){
+        this.getList(1)
+      }else{
+        this.getListByVo(1)
+      }
     }
   },
 

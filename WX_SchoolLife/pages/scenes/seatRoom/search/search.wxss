@@ -96,3 +96,13 @@ button[type="default"][plain] {
   width: 40%;
   flex: auto;
 }
+
+.noneClass{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 80%;
+  margin: 10%;
+  font-size: x-large;
+}

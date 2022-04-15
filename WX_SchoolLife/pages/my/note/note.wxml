@@ -3,37 +3,21 @@
     <view class="box">
       <view class="box_bottom">
         <view>
-          <text class="title">{{item.name}}:</text>
+          <text class="title">{{item.user}}:</text>
         </view>
       </view>
       <view class="info">
-        <text>{{item.info}}</text>
+        <text>{{item.content}}</text>
       </view>
-      <view class="box_bottom" wx:if="{{openid==item._openid}}">
-        <view class="delete" bindtap="delete" data-t="{{item}}">删除</view>
+      <view class="box_bottom" wx:if="{{userId==item.userId}}">
+        <view class="delete" bindtap="delete" data-id="{{item.id}}">删除</view>
         <view class="writer">
-          <text style="color:grey;font-size:20rpx">{{item.sendTime}}</text>
+          <text style="color:grey;font-size:20rpx">{{item.gmtCreate}}</text>
         </view>
       </view>
       <view class="writer" wx:else>
-        <text style="color:grey;font-size:20rpx">{{item.sendTime}}</text>
+        <text style="color:grey;font-size:20rpx">{{item.gmtCreate}}</text>
       </view>
     </view>
   </block>
-  <image class="send" src="../../images/biaobai/send.png" bindtap="send"></image>
 </view>
-<block wx:if="{{isSend}}">
-  <view>
-    <view class="send_bg"></view>
-    <view class="send_box">
-      <view class="top">动态编辑</view>
-      <view class="center">
-        <textarea placeholder="请输入动态内容" bindinput="getInput3" fixed="ture"></textarea>
-      </view>
-      <view class="send_button">
-        <button class="b1" bindtap="close">取消</button>
-        <button class="b2" bindtap="publish">发布</button>
-      </view>
-    </view>
-  </view>
-</block>

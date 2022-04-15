@@ -1,12 +1,13 @@
 <view class="page__hd">
   <image class="weui-media-box__thumb" src="/images/chair.png" />
-  <view class="page__desc">部分教室可能会被临时安排，请以实际情况为准</view>
+  <view class="page__desc">部分座位可能会被临时安排，请以实际情况为准</view>
 </view>
 <view class="weui-panel__bd">
 <view class="myflex-wrp">
   <view wx:for="{{list}}"  wx:key="index" class="weui-media-box myflex-item weui-media-box_text" data-id="{{item.id}}" bind:tap="book">
     <view class="weui-media-box__title weui-media-box__title_in-text">{{item.location}}-{{item.code}}</view>
   </view>
+  <view class="noneClass" wx:if="{{list.length == 0}}">暂无空闲座位</view>
 </view>
   <view class="button-sp-area">
     <button bindtap="backIndex" class="weui-btn" type="primary" plain="true">返回到首页</button>

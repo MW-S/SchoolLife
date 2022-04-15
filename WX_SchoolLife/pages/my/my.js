@@ -10,6 +10,7 @@
 
  */
 var app = getApp()
+const api = require('../../utils/api.js')
 Page({
 
   /**
@@ -22,6 +23,8 @@ Page({
     starCount: 0,
     forksCount: 0,
     visitTotal: 0,
+    noteCount: wx.getStorageSync("noteCount"),
+    vindicateCount : wx.getStorageSync("vindicateCount"),
     is_bind: false,
     pathMap: app.globalData.pathMap
   },
@@ -44,11 +47,43 @@ Page({
       visitTotal: that.coutNum(that.data.visitTotal)
     })
     wx.hideLoading()
+    this.getCars();
+    this.getDormitories();
+  },
+  toggleFormBox(e) {
+    console.log(e);
+    let val = e.currentTarget.dataset.val;
+    this.setData({
+      showformbox: val == 1 ? true : false
+    })
+  },
+  showDialog(e){
+    var type = e.currentTarget.dataset.type;
+    this.setData({
+      showformbox: true,
+      type: type
+    })
   },
   toLogin: function () {
     var type = "jwc"
     wx.navigateTo({
       url: '/pages/login/login?type=' + type,
+    })
+  },
+  getInfo(){
+    wx.showLoading({
+      title: '正在加载...'
+    });
+    api.get("/auth/info").then(res=>{
+      if(res.code == 1){
+        wx.setStorageSync('user', res.data.data)
+        wx.setStorageSync("noteCount", res.data.noteCount)
+        wx.setStorageSync("vindicateCount", res.data.vindicateCount)
+      }
+      wx.hideLoading();
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
     })
   },
   unLogin() {
@@ -91,32 +126,104 @@ Page({
         forksCount: app.globalData.user_data.comment_num
       })
     }
-
-
-    //下边是获取用户数据的云函数，同样根据学校自行定义,仅提供思路
-    //如果用户没有绑定就按0算
-
-    // wx.cloud.callFunction({
-    //   name: 'user',
-    //   data: {
-    //     action: 'my_data'
-    //   }
-    // }).then(res => {
-    //   if(res.result===null){
-    //     this.setData({
-    //       starCount: 0,
-    //       visitTotal: 0,
-    //       forksCount: 0
-    //     })
-    //   }else{
-    //     this.setData({
-    //       starCount: res.result.star_num,
-    //       visitTotal: res.result.view_num,
-    //       forksCount: res.result.comment_num
-    //     })
-    //   }
-    //   console.log(res);
-    // })
+  },
+  getCars(){
+    wx.showLoading({title:"正在加载"})
+    let that = this;
+    api.get("/car/getList").then(res=>{
+      if(res.code == 1){
+        var map = new Map();
+        res.data.data.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          map.add(item.id, item)
+          // list.push(item);
+        })
+        that.setData({
+          cars: list,
+        })
+        wx.hideLoading();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
+    })
+  },
+  getDormitories(){
+    wx.showLoading({title:"正在加载"})
+    let that = this;
+    api.get("/dormitory/getList").then(res=>{
+      if(res.code == 1){
+        var map = new Map();
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          map.add(item.id, item)
+          // list.push(item);
+        })
+        that.setData({
+          dormitories: map,
+        })
+        wx.hideLoading();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
+    })
+  },
+  formatDate(time){
+    var date = undefined,res ;
+    if(time == undefined || time == null){
+      date = new Date()
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }else{
+      date = new Date(time);
+      date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }
+    return res;
+  },
+  bindInfo(e){
+    wx.showLoading({
+      title:"正在绑定...."
+    })
+    var vo = {}
+    if(this.data.type==0){
+      vo.userId = wx.getStorageSync("user").id
+      vo.dormitoryId = this.data.dormitoryId;
+      api.post("/dormitoryUser/save", vo, 1).then(res=>{
+        if(res.code == 1){
+          wx.showToast({
+            title: "绑定成功"
+          })
+        }
+      }).catch(res=>{
+        wx.showToast({
+          title: res.msg
+        })
+        console.log(res);
+      })
+    }else{
+      vo = {
+        id : wx.getStorageSync("user").id,
+        carId: this.data.carId
+      }
+      api.post("/user/updateCarId", vo, 1).then(res=>{
+        if(res.code == 1){
+          wx.showToast({
+            title: "绑定成功"
+          })
+          this.getInfo();
+        }
+      }).catch(res=>{
+        wx.showToast({
+          title: res.msg
+        })
+        console.log(res);
+      })
+    }
+    wx.hideLoading()
+   
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -129,20 +236,14 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    let tem = wx.getStorageSync('is_bind');
-    this.setData({
-      isLogin: app.globalData.isLogin,
-      xh: wx.getStorageSync('user'),
-      is_bind: tem,
+   this.getInfo()
 
-    })
-    let ress = this.get_my_num()
   },
   go_nav(e){
     var type = e.currentTarget.dataset.type;
     var path = this.data.pathMap[type];
     wx.navigateTo({
-      url: '/pages/' + path + "?userId=" + "",
+      url: '/pages/' + path + "?userId=" +wx.getStorageSync("user").id,
     })
   },
   logout() {

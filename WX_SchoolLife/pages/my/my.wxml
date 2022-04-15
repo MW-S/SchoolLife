@@ -17,12 +17,12 @@
   </view>
   <view class="padding flex text-center text-grey bg-white shadow-warp">
     <view class="flex flex-sub flex-direction solid-right"  data-type="0" bindtap="go_nav">
-      <view class="text-xxl text-orange">{{visitTotal}}</view>
+      <view class="text-xxl text-orange">{{noteCount}}</view>
       <view class="margin-top-sm">
         <text class="cuIcon-attentionfill  text-orange"></text> 动态</view>
     </view>
     <view class="flex flex-sub flex-direction solid-right"  data-type="1" bindtap="go_nav">
-      <view class="text-xxl text-blue">{{starCount}}</view>
+      <view class="text-xxl text-blue">{{vindicateCount}}</view>
       <view class="margin-top-sm">
         <text class="cuIcon-favorfill  text-orange"></text> 表白</view>
     </view>
@@ -34,6 +34,18 @@
   </view>
 
   <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
+    <view class="cu-item arrow">
+      <view class="content" data-type="0" bindtap="showDialog">
+        <text class="cuIcon-formfill text-purple"></text>
+        <text class="text-grey">我的宿舍</text>
+      </view>
+    </view>
+    <view class="cu-item arrow">
+      <view class="content" data-type="1" bindtap="showDialog">
+        <text class="cuIcon-formfill text-purple"></text>
+        <text class="text-grey">我的车辆</text>
+      </view>
+    </view>
     <view class="cu-item arrow">
       <view class="content" data-type="2" bindtap="go_nav" >
         <text class="cuIcon-formfill text-purple"></text>
@@ -67,3 +79,21 @@
   </view>
   <!-- <view class="cu-tabbar-height"></view> -->
 </scroll-view>
+
+<block wx:if="{{showformbox}}">
+<view class='form-back'  bindtap='toggleFormBox' data-val="0" >
+</view>
+<view class='form-box'>
+      <picker  wx:if="{{type==0}}" class="picker" bindchange="bindVal" data-field="dormitoryId" value="{{dormitoryId}}" range="{{dormitories}}" range-key="name">
+          <view >
+              宿舍：{{dormitories[dormitoryId]}}
+          </view>
+      </picker>
+      <picker wx:if="{{type==1}}" class="picker" bindchange="bindVal" data-field="carId" value="{{carId}}" range="{{cars}}" range-key="number">
+         <view >
+            车辆：{{cars[carId]}}
+         </view>
+      </picker>
+      <view class='submit' bindtap='bindInfo'>绑定</view>
+</view> 
+</block>

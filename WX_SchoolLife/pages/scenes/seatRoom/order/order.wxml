@@ -4,10 +4,12 @@
   <view class='hot_list'>
     <view class='list' wx:for="{{list}}" wx:key="{{id}}">
         <view class='list_r'>
-          <view class='r_title'>座位：{{item.name}}</view>
-          <view class='r_title' style="color: #C83C32;">订单状态：{{stateText[item.state]}}</view>
-          <view class='r_title'>使用时间：{{item.useTime}}</view>
+           <view class='r_title'>校区：{{schoolText[item.school]}}</view>
+          <view class='r_title'>座位：{{item.location}}-{{item.code}}</view>
+          <view class='r_title' style="color: #C83C32;">订单状态：{{stateText[item.orderState]}}</view>
+          <view class='r_title'>使用时间：{{item.useTime}}小时</view>
           <view class='r_title'>创建时间：{{item.gmtCreate}}</view>
+          <view wx:if="{{item.orderState == 0}}" class="cancel_btn" bindtap="cancel" data-item="{{item}}">结束订单</view>
         </view>
     </view>
   </view>

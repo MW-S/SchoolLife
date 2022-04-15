@@ -48,9 +48,9 @@ Page({
         if(type == 0){
           list = [];
           page.page = 1
-        }else{
-          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
         }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
+        
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.pictures = JSON.parse(item.pictures);
@@ -87,7 +87,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function() {
-    if(this.data.total > this.data.page.page * this.data.page.size ){
+    if(this.data.total > this.data.favorlist.length ){
       this.getList(1)
     }
   },  

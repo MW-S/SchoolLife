@@ -1,5 +1,5 @@
 const app = getApp()
-import api from '../../../../utils/util.js'
+const api = require('../../../../utils/api.js');
 
 Page({
 
@@ -64,12 +64,55 @@ Page({
       url: '/pages/index/index'
     })
   },
-
+  getList(type = 0){
+    wx.showLoading({title:"正在加载"})
+    let that = this;
+    api.post("/classRoom/getListByVo", 
+    {"aimVo": JSON.stringify(that.data.vo)}
+    , 0 , 0).then(res=>{
+      if(res.code == 1){
+        var list = [];
+        res.data.list.forEach(item=>{
+          var tmp = that.formatDate(item.gmtCreate);
+          item.gmtCreate = tmp;
+          list.push(item);
+        })
+        that.setData({
+          list: list,
+          total: res.data.total
+        })
+        wx.hideLoading();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      console.log(res);
+    })
+  },
+  formatDate(time){
+    var date = undefined,res ;
+    if(time == undefined || time == null){
+      date = new Date()
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }else{
+      date = new Date(time);
+      date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
+      res =  date.toJSON().replace('T', ' ').split('.')[0];
+    }
+    return res;
+  },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getRoom(options)
+    var vo = {
+      school: options.school,
+      location: options.location,
+      state: 0
+    }
+    this.setData({
+      vo: vo
+    })
+    this.getList()
   },
 
   /**

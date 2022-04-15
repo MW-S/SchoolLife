@@ -10,7 +10,9 @@ Page({
     listData: [],
     teachBuilding:"",
     show: false,
-    columns:["1个小时","2个小时","3个小时","4个小时","5个小时","6个小时",]
+    columns:[
+      "1个小时","2个小时","3个小时","4个小时","5个小时","6个小时"
+    ]
   },
   book: function(e){
     var id = e.currentTarget.dataset.id;
@@ -34,9 +36,10 @@ Page({
     })
   },
   onChange(event) {
+    debugger
     const { picker, value, index } = event.detail;
     var saveVo = this.data.saveVo;
-    saveVo.useTime = value;
+    saveVo.useTime = index+1;
     this.setData({
       saveVo: saveVo
     })

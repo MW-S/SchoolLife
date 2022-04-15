@@ -24,7 +24,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
     this.getList();
   },
   //获取输入内容
@@ -138,9 +137,8 @@ Page({
         if(type == 0){
           list = [];
           page.page = 1
-        }else{
-          page.page = (page.page * page.size < that.data.total)? page.page + 1: page.page
         }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.gmtCreate = tmp;
@@ -207,7 +205,7 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    if(this.data.total > this.data.page.page * this.data.page.size ){
+    if(this.data.total > this.data.dataList.length){
       this.getList(1)
     }
     

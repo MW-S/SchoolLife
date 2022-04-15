@@ -114,6 +114,23 @@ public class JwtTokenUtils implements InitializingBean {
         }
         return claims;
     }
+
+    /**
+     * 判断token是否已经失效
+     */
+    public boolean isTokenExpired(String token) {
+        Date expiredDate = getExpiredDateFromToken(token);
+        return expiredDate==null?true:expiredDate.before(new Date());
+    }
+
+    /**
+     * 从token中获取过期时间
+     */
+    private Date getExpiredDateFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims==null?null:claims.getExpiration();
+    }
+
 }
 
 

@@ -1,0 +1,7 @@
+alter table `delivery_order`
+	add column `school` tinyint(2) default 0 comment '所属校区：0-官渡校区 1-西城校区 2-光华校区' after `name`;
+
+	
+alter table `seat`
+	add column `school` tinyint(2) default 0 comment '所属校区：0-官渡校区 1-西城校区 2-光华校区' after `location`;
+

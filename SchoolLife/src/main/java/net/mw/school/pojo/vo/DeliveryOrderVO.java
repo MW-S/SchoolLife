@@ -23,6 +23,11 @@ public class DeliveryOrderVO extends BaseVO {
     private String name;
 
     /**
+     * 所在校区
+     */
+    private String school;
+
+    /**
      * 价格
      */
     private String price;

@@ -1,5 +1,7 @@
 package net.mw.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.gson.Gson;
 import net.mw.school.controller.CanteenController;
 import net.mw.school.pojo.po.CanteenPO;
 import net.mw.school.pojo.vo.CanteenVO;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public class BaseController <S extends BaseService<E>, E, V> {
 
@@ -34,6 +37,9 @@ public class BaseController <S extends BaseService<E>, E, V> {
     @Autowired
     protected S service;
 
+    @Autowired
+    protected Gson gson;
+
     private Method method;
 
     public Class<?> getGenericClass(Integer index) {
@@ -41,9 +47,19 @@ public class BaseController <S extends BaseService<E>, E, V> {
         return (Class<?>) parameterizedType.getActualTypeArguments()[index];
     }
 
+    public void setVoToPo(Class<?> cla){
+        for(Method m:cla.getMethods()){
+            if(m.getName().equals("voToPo")){
+                method = m;
+                break;
+            }
+        }
+    }
+
+
     @GetMapping(value = "/getList")
-    public ResultMessage getList( @RequestParam(value = "page", required = false) int page
-            , @RequestParam(value = "size", required = false) int size
+    public ResultMessage getList( @RequestParam(value = "page", required = false) Integer page
+            , @RequestParam(value = "size", required = false) Integer size
             , @CurrentUser UserPO user){
         logger.trace("进入getList方法");
         PageRequest pageVo = null;
@@ -52,6 +68,29 @@ public class BaseController <S extends BaseService<E>, E, V> {
         }
         ResultMessage rs=service.getList(pageVo, user);
         logger.trace("退出getList方法");
+        return rs;
+    }
+
+    @PostMapping(value = "/getListByVo")
+    public ResultMessage getListByVo( @RequestParam(value = "page", required = false) Integer page
+            , @RequestParam(value = "size", required = false) Integer size
+            , @RequestParam(value = "aimVo", required = false) String aimVoJson
+            , @CurrentUser UserPO user) throws InvocationTargetException, IllegalAccessException {
+        logger.trace("进入 getListByVo 方法");
+        Class<?> cla = getGenericClass(2),
+                e_class = getGenericClass(1);
+        PageRequest pageVo = null;
+        E po = null;
+        if(ObjectUtils.allNotNull(page, size)){
+            pageVo = PageRequest.of(page, size);
+        }
+        if(ObjectUtils.allNotNull(aimVoJson)){
+            V vo = (V) gson.fromJson(aimVoJson, cla);
+            this.setVoToPo(cla);
+            po = (E) method.invoke(vo, e_class);
+        }
+        ResultMessage rs=service.getList(pageVo, new QueryWrapper<E>(po), user);
+        logger.trace("退出 getListByVo 方法");
         return rs;
     }
 

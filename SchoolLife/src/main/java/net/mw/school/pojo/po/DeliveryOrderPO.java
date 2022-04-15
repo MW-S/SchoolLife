@@ -43,6 +43,10 @@ public class DeliveryOrderPO extends BasePO {
      * 特定购买地点
      */
     private String address;
+    /**
+     * 所在校区
+     */
+    private Integer school;
 
     /**
      * 用户电话

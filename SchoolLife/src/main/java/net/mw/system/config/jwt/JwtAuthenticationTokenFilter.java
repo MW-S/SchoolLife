@@ -39,7 +39,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             token = bearerToken.substring(jwtSecurityProperties.getTokenStartWith().length());
         }
 
-        if (StringUtils.hasText(token) && jwtTokenUtils.validateToken(token)) {
+        if(jwtTokenUtils.isTokenExpired(token)){
+            log.debug("Current token has expired");
+        }else if (StringUtils.hasText(token) && jwtTokenUtils.validateToken(token)) {
             Authentication authentication = jwtTokenUtils.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);

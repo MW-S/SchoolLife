@@ -84,16 +84,16 @@
 <view class='form-back'  bindtap='toggleFormBox' data-val="0" >
 </view>
 <view class='form-box'>
-      <picker  wx:if="{{type==0}}" class="picker" bindchange="bindVal" data-field="dormitoryId" value="{{dormitoryId}}" range="{{dormitories}}" range-key="name">
+      <picker  wx:if="{{type==0}}" class="picker" bindchange="bindVal" data-field="dormitoryIndex" value="{{dormitoryIndex}}" range="{{dormitories}}" range-key="{{'locationName'}}">
           <view >
-              宿舍：{{dormitories[dormitoryId]}}
+              宿舍：{{dormitories[dormitoryIndex].locationName}}
           </view>
       </picker>
-      <picker wx:if="{{type==1}}" class="picker" bindchange="bindVal" data-field="carId" value="{{carId}}" range="{{cars}}" range-key="number">
+      <picker wx:if="{{type==1}}" class="picker" bindchange="bindVal" data-field="carIndex" value="{{carIndex}}" range="{{cars}}" range-key="{{'number'}}">
          <view >
-            车辆：{{cars[carId]}}
+            车辆：{{cars[carIndex].number}}
          </view>
       </picker>
-      <view class='submit' bindtap='bindInfo'>绑定</view>
+      <view class='submit' bindtap='bindInfo'>{{(type==0 && dormitoryIndex!=undefined)||(type==1 && carIndex!=undefined)?'更改绑定':'绑定'}}</view>
 </view> 
 </block>

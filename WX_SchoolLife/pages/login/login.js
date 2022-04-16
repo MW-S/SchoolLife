@@ -39,11 +39,6 @@ Page({
    */
   onLoad: async function (options) {
     await this.isLogin();
-    var isLogin = wx.getStorageSync("login");
-    if(isLogin == true){
-      wx.switchTab({url:"/pages/index/index"})
-    }
-    
   },
   tapHelp: function (e) {
     if (e.target.id == 'help') {
@@ -159,14 +154,14 @@ Page({
     wx.showLoading({
       title: 'Loading...', //提示的内容,
     });
-    
     api.get("/auth/isLogin").then(res=>{
+      wx.hideLoading();
       if(res.code == 1){
         wx.setStorageSync('login', true);
+        wx.switchTab({url:"/pages/index/index"})
       }else{
         wx.setStorageSync('login', false);
       }
-      wx.hideLoading();
     }).catch(res=>{
       wx.setStorageSync('login', false);
       wx.hideLoading();

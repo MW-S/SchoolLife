@@ -107,6 +107,7 @@ Page({
         wx.setStorageSync('user', res.data.data)
         wx.setStorageSync("noteCount", res.data.noteCount)
         wx.setStorageSync("vindicateCount", res.data.vindicateCount)
+        wx.setStorageSync("dormitoryId", res.data.dormitoryId)
       }
     }).catch(res=>{
       console.log(res);

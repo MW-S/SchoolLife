@@ -25,6 +25,8 @@ Page({
     visitTotal: 0,
     noteCount: wx.getStorageSync("noteCount"),
     vindicateCount : wx.getStorageSync("vindicateCount"),
+    dormitoryId: wx.getStorageSync("dormitoryId"),
+    carId: wx.getStorageSync("user").carId,
     is_bind: false,
     pathMap: app.globalData.pathMap
   },
@@ -33,18 +35,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
     console.log("success")
     let that = this;
     wx.showLoading({
       title: '数据加载中',
       mask: true,
-    })
-   
-    that.setData({
-      starCount: that.coutNum(that.data.starCount),
-      forksCount: that.coutNum(that.data.forksCount),
-      visitTotal: that.coutNum(that.data.visitTotal)
     })
     wx.hideLoading()
     this.getCars();
@@ -64,6 +59,11 @@ Page({
       type: type
     })
   },
+  closeDialog(){
+    this.setData({
+      showformbox: false
+    })
+  },
   toLogin: function () {
     var type = "jwc"
     wx.navigateTo({
@@ -79,6 +79,12 @@ Page({
         wx.setStorageSync('user', res.data.data)
         wx.setStorageSync("noteCount", res.data.noteCount)
         wx.setStorageSync("vindicateCount", res.data.vindicateCount)
+        wx.setStorageSync("dormitoryId", res.data.dormitoryId)
+        this.setData({
+          dormitoryId: res.data.dormitoryId
+        })
+        this.setIndexById(res.data.dormitoryId);
+        this.setIndexById(res.data.data.carId,1);
       }
       wx.hideLoading();
     }).catch(res=>{
@@ -95,21 +101,6 @@ Page({
     })
     wx.setStorageSync('is_bind', false)
     wx.hideLoading()
-    //云函数中将用户记录的状态表示设置为解绑状态，同时本地更新绑定缓存
-
-    // wx.cloud.callFunction({
-    //   name: 'user',
-    //   data: {
-    //     action: 'un_bind'
-    //   }
-    // }).then(res => {
-    //   console.log(res);
-    //   wx.hideLoading()
-    //   //app.globalData.is_bind = false;
-
-    // }).catch(err => {
-    //   wx.hideLoading()
-    // })
   },
   get_my_num() {
     console.log("+===>")
@@ -132,12 +123,17 @@ Page({
     let that = this;
     api.get("/car/getList").then(res=>{
       if(res.code == 1){
-        var map = new Map();
-        res.data.data.forEach(item=>{
+        var list = [];
+        res.data.data.forEach((item, index)=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.gmtCreate = tmp;
-          map.add(item.id, item)
-          // list.push(item);
+          // map.set(item.id, item)
+          if(item.id ==  wx.getStorageSync('user').carId){
+            that.setData({
+              carIndex: index
+            })
+          }
+          list.push(item);
         })
         that.setData({
           cars: list,
@@ -154,15 +150,22 @@ Page({
     let that = this;
     api.get("/dormitory/getList").then(res=>{
       if(res.code == 1){
-        var map = new Map();
-        res.data.list.forEach(item=>{
+        // var map = new Map();
+        var list = []
+        res.data.list.forEach((item, index)=>{
+          if(item.id == that.data.dormitoryId){
+            that.setData({
+              dormitoryIndex: index
+            })
+          }
           var tmp = that.formatDate(item.gmtCreate);
           item.gmtCreate = tmp;
-          map.add(item.id, item)
-          // list.push(item);
+          item.locationName = item.location + item.name
+          // map.set(item.id, item)
+          list.push(item);
         })
         that.setData({
-          dormitories: map,
+          dormitories: list,
         })
         wx.hideLoading();
       }
@@ -190,9 +193,13 @@ Page({
     var vo = {}
     if(this.data.type==0){
       vo.userId = wx.getStorageSync("user").id
-      vo.dormitoryId = this.data.dormitoryId;
+      vo.dormitoryId = this.data.dormitories[this.data.dormitoryIndex].id;
       api.post("/dormitoryUser/save", vo, 1).then(res=>{
         if(res.code == 1){
+          this.setData({
+            dormitoryId: vo.dormitoryId
+          })
+          this.closeDialog()
           wx.showToast({
             title: "绑定成功"
           })
@@ -206,10 +213,11 @@ Page({
     }else{
       vo = {
         id : wx.getStorageSync("user").id,
-        carId: this.data.carId
+        carId: this.data.cars[this.data.carIndex].id
       }
       api.post("/user/updateCarId", vo, 1).then(res=>{
         if(res.code == 1){
+          this.closeDialog()
           wx.showToast({
             title: "绑定成功"
           })
@@ -223,8 +231,34 @@ Page({
       })
     }
     wx.hideLoading()
-   
   },
+    //绑定信息
+    bindVal(e){
+      var val = e.detail.value;
+      var field = e.currentTarget.dataset.field
+      this.setData({
+        [field]: val
+      })
+    },
+    setIndexById(id, type=0){
+      let that = this;
+      //0表示宿舍  1表示车辆
+      var typeText = ["dormitories", "cars"]
+      var idText = ["dormitoryId", "carId"]
+      var indexText = ["dormitoryIndex", "carIndex"]
+      var list = that.data[typeText[type]];
+      list.forEach((item, index)=>{
+        if(item.id == that.data[idText[type]]){
+          that.setData({
+            [indexText[type]]: index
+          })
+        }else if(type == 1 && item.id == wx.getStorageSync('user').carId){
+          that.setData({
+            [indexText[type]]: index
+          })
+        }
+      })
+    },
   /**
    * 生命周期函数--监听页面初次渲染完成
    */

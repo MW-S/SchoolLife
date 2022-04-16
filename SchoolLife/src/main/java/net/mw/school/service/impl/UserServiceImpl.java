@@ -8,8 +8,10 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import net.mw.school.dao.DormitoryUserDao;
 import net.mw.school.dao.NoteDao;
 import net.mw.school.dao.VindicateDao;
+import net.mw.school.pojo.po.DormitoryUserPO;
 import net.mw.school.pojo.po.NotePO;
 import net.mw.school.pojo.po.VindicatePO;
 import net.mw.system.dao.RoleDao;
@@ -67,7 +69,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private VindicateDao vindicateDao;
-	
+
+	@Autowired
+	private DormitoryUserDao dormitoryUserDao;
+
     @Override
     public ResultMessage login(UserPO po) {
     	logger.trace("进入login方法");
@@ -268,8 +273,10 @@ public class UserServiceImpl implements UserService {
 			resVo.poToVo(resPo);
 			Long noteCount = noteDao.selectCount(new QueryWrapper<NotePO>().eq("user_id", resVo.getId()));
 			Long vindicateCount = vindicateDao.selectCount(new QueryWrapper<VindicatePO>().eq("user_id", resVo.getId()));
+			DormitoryUserPO dormitoryUser = dormitoryUserDao.selectOne(new QueryWrapper<DormitoryUserPO>().eq("user_id", resVo.getId()));
 			data.put("noteCount",noteCount.toString());
 			data.put("vindicateCount",vindicateCount.toString());
+			data.put("dormitoryId", ObjectUtils.allNotNull(dormitoryUser)?dormitoryUser.getDormitoryId().toString():0);
 			data.put("data",resVo);
 			data.put("roles", roleVos);
 			rs.setData(data);

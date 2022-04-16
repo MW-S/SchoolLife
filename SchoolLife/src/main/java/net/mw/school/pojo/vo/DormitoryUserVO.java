@@ -1,7 +1,7 @@
 package net.mw.school.pojo.vo;
 
 import lombok.Data;
-import net.mw.system.pojo.base.BasePO;
+import net.mw.system.pojo.base.BaseVO;
 
 /**
  * @Description 宿舍人员表实体
@@ -10,23 +10,23 @@ import net.mw.system.pojo.base.BasePO;
  *
  */
 @Data
-public class DormitoryUserVO extends BasePO{
+public class DormitoryUserVO extends BaseVO {
 
     /**
      * 主键
      */
-    private Long id;
+    private String id;
 
 
     /**
      * 用户ID
      */
-    private Long userId;
+    private String userId;
 
 
     /**
      * 宿舍ID
      */
-    private Long dormitoryId;
+    private String dormitoryId;
 
 }

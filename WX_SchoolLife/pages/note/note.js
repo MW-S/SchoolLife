@@ -92,7 +92,7 @@ Page({
     let that = this;
     var ids =  [id],
     a ={a:12312}
-    api.post("/note/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+    api.post("/entertainment/note/delByIds", {ids: ids}, 0, 0 ).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -114,7 +114,7 @@ Page({
       content: that.data.note.content,
       userId: wx.getStorageSync("user").id
     }
-    api.post("/note/save", note, 1).then(res=>{
+    api.post("/entertainment/note/save", note, 1).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -130,7 +130,7 @@ Page({
   },
   getList(type = 0){
     let that = this;
-    api.get("/note/getNoteList", that.data.page).then(res=>{
+    api.get("/entertainment/note/getNoteList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.dataList;
         var page = that.data.page;

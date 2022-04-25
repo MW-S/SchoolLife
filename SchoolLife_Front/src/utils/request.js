@@ -18,7 +18,7 @@ service.interceptors.request.use(
     if(config.url.indexOf("uploadOss") != -1){
       // config.headers['head']['Content-Type'] = 'multipart/form-data'
       // config.headers['post']['Content-Type'] = 'multipart/form-data'
-      // config.headers['Content-Type'] = 'multipart/form-data'
+      config.headers['Content-Type'] = 'multipart/form-data'
     }
     if (getJWTToken()) {
       // let each request carry token

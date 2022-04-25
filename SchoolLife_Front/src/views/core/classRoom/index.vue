@@ -16,40 +16,33 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="名称" width="150px" align="center">
+      <el-table-column label="教室号" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.code }}</span>
         </template>
       </el-table-column>
-        <el-table-column label="供应饭堂" width="150px" align="center">
+      <el-table-column label="所在楼"  align="center" >
         <template slot-scope="{row}">
-          <span>{{ getCanteenName(row.canteenId) }}</span>
+          <span>{{ row.location }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="价格" width="150px" align="center">
+      <el-table-column label="所在校区"  align="center" >
         <template slot-scope="{row}">
-          <span>{{ row.price }}元</span>
+          <span>{{ schoolText[row.school] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="食物类型" width="150px" align="center">
+      <el-table-column label="教室状态"  align="center" >
         <template slot-scope="{row}">
-          <span>{{ typeText[row.type] }}</span>
+          <span>{{ stateText[row.state] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="提供日期" width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.offerDate }}</span>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="图片"  align="center" >
-        <template slot-scope="{row}">
-          <span>{{ row.pictures }}</span>
-        </template>
-      </el-table-column> -->
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button  type="primary" size="mini" @click="handleUpdate(row)">
             编辑
+          </el-button>
+          <el-button  type="primary" size="mini" @click="handleModifyStatus(row.id, row.state)">
+            {{row.state == "false"?"占用":"空闲" }}
           </el-button>
           <el-button  size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
@@ -62,59 +55,24 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="display: flex-direction: column;align-items: center;justify-content: center;">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name" type="text" />
+        <el-form-item label="教室号" prop="code">
+          <el-input v-model="temp.code" type="text" />
         </el-form-item>
-        <el-form-item label="供应饭堂" prop="canteenId">
-          <el-select v-model="temp.canteenId" placeholder="请选择">
-            <el-option
-              v-for="item in canteens"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+        <el-form-item label="所属楼" prop="location">
+          <el-input v-model="temp.location" type="text" />
+        </el-form-item>
+        <el-form-item label="所在校区" prop="school">
+          <el-select v-model="temp.school" >
+            <el-option :key="0" label="官渡校区" :value="0"></el-option>
+            <el-option :key="1" label="西城校区" :value="1"></el-option>
+             <el-option :key="2" label="光华校区" :value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="价格" prop="price">
-          <el-input v-model="temp.price" type="text" />
-        </el-form-item>
-        <el-form-item label="食物类型" prop="type">
-          <el-select v-model="temp.type" placeholder="请选择">
-            <el-option
-              v-for="item in types"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+        <el-form-item label="状态" prop="state">
+          <el-select v-model="temp.state" >
+            <el-option key="false" label="空闲" value="false"></el-option>
+            <el-option key="true" label="占用" value="true"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="提供日期" prop="offerDate">
-          <el-date-picker
-              v-model="temp.offerDate"
-              value-format="yyyy-MM-dd"
-              type="date"
-              placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="图片" >
-          <!-- <el-input v-model="temp.pictures" type="textarea" /> -->
-          <el-upload
-            class="upload-demo"
-            action=""
-            :http-request="uploadFile"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            multiple
-            :limit="3"
-            :on-exceed="handleExceed"
-            list-type="picture-card"
-            :file-list="fileList">
-            <!-- <img v-for="file in fileList" :src="file.url" class="avatar" />  -->
-						<i class="el-icon-plus"></i>
-            <!-- <el-button size="small" type="primary">点击上传</el-button> -->
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -126,14 +84,16 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="dialogPreviewVisible" :modal-append-to-body="false"> 
-      <img width="100%" :src="dialogImageUrl" alt>
-    </el-dialog>
+
+    <!-- <el-dialog title="文件上传" :visible.sync="dialogAddFile">
+      <upload :id="temp.id" @child-event="uploadSuccess" />
+    </el-dialog> -->
+
   </div>
 </template>
 
 <script>
-import { getList, getById, save, delByIds, uploadFile} from '@/api/common'
+import { getList, getById, save, delByIds } from '@/api/common'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -153,7 +113,7 @@ const calendarTypeOptions = [
 // }, {})
 
 export default {
-  name: 'Food',
+  name: 'Seat',
   components: { Pagination, Upload },
   directives: { waves },
   filters: {
@@ -172,31 +132,11 @@ export default {
   },
   data() {
     return {
-      serverUrl: this.SERVERURL,
-      fileList: [],
-      canteens:[],
-      types: [{
-        id: 0,
-        name: "早餐"
-      },
-      {
-        id: 1,
-        name: "午餐"
-      },
-      {
-        id: 2,
-        name: "晚餐"
-      },
-      {
-        id: 3,
-        name: "宵夜"
-      }],
-      typeText: ["早餐", "午餐", "晚餐", "宵夜"],
-      target: "diet/food",
-      dialogImageUrl: "",
-      dialogPreviewVisible: false,
+      schoolText: ["官渡校区", "西城校区", "光华校区"],
+      stateText:{ "false" : "空闲", "true" : "已占用"},
+      target: "place/classRoom",
       tableKey: 0,
-      list: [],
+      list: null,
       total: 0,
       listLoading: true,
       listQuery: {
@@ -240,76 +180,89 @@ export default {
     }
   },
   created() {
-    this.listQuery.isAdmin =  this.$store.state.user.isAdmin
-    // this.getCanteens()
-    this.getList();
+    this.listQuery.isAdmin = this.$store.state.user.isAdmin
+    this.getList()
   },
   methods: {
-    uploadFile(param){
-      var formData = new FormData()
-      formData.append('file', param.file)
-      uploadFile(formData).then(response => {
-        console.log('上传图片成功')
-        this.fileList.push({
-            name: param.file.name,
-            url: this.SERVERURL  + response.data.path
-          })
-      }).catch(response => {
-        console.log('图片上传失败')
+    uploadSuccess(data) {
+      console.log(data)
+      this.dialogAddFile = data
+      this.$notify({
+        title: 'Success',
+        message: 'Upload Successfully',
+        type: 'success',
+        duration: 2000
+      })
+      const tempData = Object.assign({}, this.temp)
+      updateTask(tempData).then(() => {
+        const index = this.list.findIndex(v => v.id === tempData.id)
+        this.list.splice(index, 1, tempData)
+        this.dialogFormVisible = false
+        this.$notify({
+          title: 'Success',
+          message: 'Update Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
     },
-    handleRemove(file, fileList) {
-      this.fileList.splice(this.fileList.indexOf(file),1)
-    },
-    handlePreview(file) {
-      this.dialogImageUrl = file.url;
-		  this.dialogPreviewVisible = true;
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.name }？`);
-    },
-    getCanteenName(id){
-       var item ;
-      for(var index in this.canteens){
-        item = this.canteens[index]
-        if(item.id == id){
-          return item.name
+    /*    getFile(event) {
+      var file = event.target.files
+      for (var i = 0; i < file.length; i++) {
+      //    上传类型判断
+        var imgName = file[i].name
+        var idx = imgName.lastIndexOf('.')
+        if (idx != -1) {
+          var ext = imgName.substr(idx + 1).toUpperCase()
+          ext = ext.toLowerCase()
+          if (ext != 'pdf' && ext != 'doc' && ext != 'docx') {
+          } else {
+            this.addArr.push(file[i])
+          }
         }
       }
-      return "该食堂不存在"
     },
+    submitAddFile() {
+      return new Promise((resolve, reject) => {
+        if (this.addArr.length == 0) {
+          this.$message({
+            type: 'info',
+            message: '请选择要上传的文件'
+          })
+          return
+        }
+        var formData = new FormData()
+        formData.append('num', this.addType)
+        formData.append('linkId', this.addId)
+        formData.append('rfilename', this.addFileName)
+        for (var i = 0; i < this.addArr.length; i++) {
+          formData.append('fileUpload', this.addArr[i])
+        }
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': this.token
+          }
+        }
+        this.axios.post('', formData, config)
+          .then((response) => {
+            if (response.data.info == 'success') {
+              this.$message({
+                type: 'success',
+                message: '附件上传成功!'
+              })
+            }
+          })
+      })
+    }, */
     resetAdd() {
       this.addArr = []
     },
-   async getList() {
-      const that = this
-      if(this.canteens.length == 0){
-        var res = await this.getCanteens();
-      }
-      that.listLoading = true
-      that.list = []
-      getList(that.target, that.listQuery).then(response => {
-        response.data.list.forEach(item=>{
-          // item.canteen = that.getCanteenName(item.id)
-          that.list.push(item)
-        })
-        that.total = response.data.size
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-    },
-    getCanteens() {
+    getList() {
       this.listLoading = true
-      getList("diet/canteen", {
-        page: 1,
-        size: 30,
-      }).then(response => {
-        this.canteens = response.data.list
+      getList(this.target, this.listQuery).then(response => {
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -320,25 +273,20 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      this.temp = Object.assign({}, row)
-      this.temp.state = status
-      if (status === 1) {
-        this.dialogAddFile = true
-      } else {
-        const tempData = Object.assign({}, this.temp)
-        updateTask(tempData).then(() => {
-          const index = this.list.findIndex(v => v.id === tempData.id)
-          this.list.splice(index, 1, tempData)
-          this.dialogFormVisible = false
-          this.$notify({
-            title: 'Success',
-            message: 'Update Successfully',
-            type: 'success',
-            duration: 2000
-          })
-        })
-      }
+    handleModifyStatus(id, state) {
+       this.resetTemp();
+      this.temp.id = id;
+      this.temp.state = (state == "false"? "true":"false");
+      save(this.target, this.temp).then(() => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Created Successfully',
+              type: 'success',
+              duration: 2000
+            })
+      })
     },
     sortChange(data) {
       const { prop, order } = data
@@ -357,7 +305,10 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        name: ''
+        name: '',
+        type: '',
+        descript: '',
+        state: ''
       }
     },
     handleCreate() {

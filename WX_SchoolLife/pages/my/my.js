@@ -17,6 +17,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    fileList: [],
     color: "",
     xh: "",
     isLogin: false,
@@ -74,7 +75,7 @@ Page({
     wx.showLoading({
       title: '正在加载...'
     });
-    api.get("/auth/info").then(res=>{
+    api.get("/user/auth/info").then(res=>{
       if(res.code == 1){
         wx.setStorageSync('user', res.data.data)
         wx.setStorageSync("noteCount", res.data.noteCount)
@@ -121,7 +122,7 @@ Page({
   getCars(){
     wx.showLoading({title:"正在加载"})
     let that = this;
-    api.get("/car/getList").then(res=>{
+    api.get("/traffic/car/getList").then(res=>{
       if(res.code == 1){
         var list = [];
         res.data.data.forEach((item, index)=>{
@@ -148,7 +149,7 @@ Page({
   getDormitories(){
     wx.showLoading({title:"正在加载"})
     let that = this;
-    api.get("/dormitory/getList").then(res=>{
+    api.get("/user/dormitory/getList").then(res=>{
       if(res.code == 1){
         // var map = new Map();
         var list = []
@@ -174,6 +175,25 @@ Page({
       console.log(res);
     })
   },
+  afterRead(event) {
+    let that = this;
+    const { file } = event.detail;
+    // 当设置 mutiple 为 true 时, file 为数组格式，否则为对象格式
+    wx.uploadFile({
+      url: app.globalData.serverUrl + "/user/uploadOss", // 仅为示例，非真实的接口地址
+      header: {"Authorization": "Bearer " +wx.getStorageSync('token')},
+      filePath: file.url,
+      name: 'file',
+      formData: { user: 'test' },
+      success(res) {
+        // 上传完成需要更新 fileList
+        var data = JSON.parse(res.data)
+        const  fileList = [] ;
+        fileList.push({ ...file, url: data.data.path });
+        that.setData({ fileList });
+      },
+    });
+  },
   formatDate(time){
     var date = undefined,res ;
     if(time == undefined || time == null){
@@ -194,7 +214,7 @@ Page({
     if(this.data.type==0){
       vo.userId = wx.getStorageSync("user").id
       vo.dormitoryId = this.data.dormitories[this.data.dormitoryIndex].id;
-      api.post("/dormitoryUser/save", vo, 1).then(res=>{
+      api.post("/user/dormitoryUser/save", vo, 1).then(res=>{
         if(res.code == 1){
           this.setData({
             dormitoryId: vo.dormitoryId
@@ -215,7 +235,7 @@ Page({
         id : wx.getStorageSync("user").id,
         carId: this.data.cars[this.data.carIndex].id
       }
-      api.post("/user/updateCarId", vo, 1).then(res=>{
+      api.post("/user/user/updateCarId", vo, 1).then(res=>{
         if(res.code == 1){
           this.closeDialog()
           wx.showToast({

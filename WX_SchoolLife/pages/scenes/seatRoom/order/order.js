@@ -39,7 +39,7 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载...."})
     let that = this;
-    api.post("/seat/getOrderListByVo",
+    api.post("/place/seat/getOrderListByVo",
      {"page": that.data.page.page,
      "size": that.data.page.size,
        "aimVo": JSON.stringify(that.data.vo)}
@@ -85,9 +85,9 @@ Page({
     var item = e.currentTarget.dataset.item;
     wx.showLoading({title:"正在结束预约"})
     let that = this;
-    let res =  await api.post("/seat/saveOrder", {id:item.id, state: 1}, 1);
+    let res =  await api.post("/place/seat/saveOrder", {id:item.id, state: 1}, 1);
     if(res.code == 1){
-      await api.post("/seat/save", {id:item.seatId, state: 0}, 1);
+      await api.post("/place/seat/save", {id:item.seatId, state: 0}, 1);
       this.getList()
       wx.hideLoading()
     }else{

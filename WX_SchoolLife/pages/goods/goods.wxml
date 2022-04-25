@@ -15,7 +15,7 @@
           <image class='img' src='{{item}}' mode='aspectFill'></image>
         </block>
       </scroll-view>
-      <view class="box_bottom" wx:if="{{openid==item._openid}}">
+      <view class="box_bottom" wx:if="{{vo.userId==item.userId}}">
         <view class="delete" catchtap="delete" data-id="{{item.id}}">删除</view>
         <view class="time">{{item.gmtCreate}}</view>
       </view>

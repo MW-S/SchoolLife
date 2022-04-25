@@ -123,7 +123,7 @@ export default {
   },
   data() {
     return {
-      target: "dormitory",
+      target: "user/dormitory",
       tableKey: 0,
       list: null,
       total: 0,
@@ -250,8 +250,8 @@ export default {
     getList() {
       this.listLoading = true
       getList(this.target, this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false

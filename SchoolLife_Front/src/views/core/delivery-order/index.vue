@@ -186,7 +186,7 @@ export default {
   },
   data() {
     return {
-      target:"deliveryOrder",
+      target:"diet/deliveryOrder",
       stateText: {"0": "取货中", "1": "配送中", "2": "已送达"},
       tableKey: 0,
       list: [],
@@ -337,7 +337,7 @@ export default {
         page: 1,
         size: 100,
       }).then(response => {
-        this.users = response.data.data
+        this.users = response.data.list
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -347,8 +347,8 @@ export default {
     getList() {
       this.listLoading = true
       getList(this.target, this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -435,7 +435,7 @@ export default {
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: 'Update Successfully',
+          message: 'Delete Successfully',
           type: 'success',
           duration: 2000
         })

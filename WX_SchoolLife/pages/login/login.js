@@ -154,7 +154,7 @@ Page({
     wx.showLoading({
       title: 'Loading...', //提示的内容,
     });
-    api.get("/auth/isLogin").then(res=>{
+    api.get("/user/auth/isLogin").then(res=>{
       wx.hideLoading();
       if(res.code == 1){
         wx.setStorageSync('login', true);
@@ -175,7 +175,7 @@ Page({
       success: (res) => {
         res.userInfo.name = res.userInfo.nickName
         var user = res.userInfo;
-        api.post("/auth/login", { userName: 10000, password: 123456 }, 1).then(res=>{
+        api.post("/user/auth/login", { userName: 10000, password: 123456 }, 1).then(res=>{
           wx.setStorageSync('token', res.data.token);
           wx.setStorageSync('user', user);
           wx.setStorageSync('login', true);

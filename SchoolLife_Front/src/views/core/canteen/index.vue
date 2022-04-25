@@ -51,10 +51,31 @@
           <el-input v-model="temp.name" type="text" />
         </el-form-item>
         <el-form-item label="营业时间" prop="openTime">
-          <el-input v-model="temp.openTime" type="text" />
+          <!-- <el-input v-model="temp.openTime" type="text" /> -->
+          <el-time-picker
+            is-range
+            v-model="openTime"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            placeholder="选择时间范围">
+          </el-time-picker>
         </el-form-item>
         <el-form-item label="所在地点" prop="location">
           <el-input v-model="temp.location" type="textarea" />
+        </el-form-item>
+        <el-form-item label="图片" prop="pictures">
+          <el-upload 
+              class="upload-demo"
+              action="#"
+              list-type="picture-card"
+              :multiple="false"
+              :show-file-list="true"
+              :http-request="uploadHttpRequest"
+              :on-remove="handleRemove"
+              :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -66,32 +87,15 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <!--    <el-dialog title="文件上传" :visible.sync="false" width="500px" style="padding:0;" @close="resetAdd()">
-      文件名称：<el-input v-model="addFileName" autocomplete="off" size="small" style="width: 300px;" />
-      <div class="add-file-right" style="height:70px;margin-left:100px;margin-top:15px;">
-        <div class="add-file-right-img" style="margin-left:70px;">上传文件：</div>
-        <input ref="clearFile" type="file" multiple="multiplt" class="add-file-right-input" style="margin-left:70px;" accept=".docx,.doc,.pdf" @change="getFile($event)">
-        <span class="add-file-right-more">支持扩展名：.doc .docx .pdf </span>
-      </div>
-      <div class="add-file-list">
-        <ul>
-          <li v-for="(item, index) in addArr" :key="index"><a>{{ item.name }}</a></li>
-        </ul>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="submitAddFile()">开始上传</el-button>
-        <el-button size="small" @click="resetAdd()">全部删除</el-button>
-      </div>
-    </el-dialog> -->
-    <el-dialog title="文件上传" :visible.sync="dialogAddFile">
+    <!-- <el-dialog title="文件上传" :visible.sync="dialogAddFile">
       <upload :id="temp.id" @child-event="uploadSuccess" />
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 </template>
 
 <script>
+import { upload } from '@/api/upload.js'
 import { getList, getById, save, delByIds } from '@/api/canteen'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -131,6 +135,9 @@ export default {
   },
   data() {
     return {
+      serverUrl: this.SERVERURL,
+      openTime: [new Date(2022, 4, 10, 8), new Date(2022, 4, 10, 22, 30)],
+      fileList: [],
       tableKey: 0,
       list: null,
       total: 0,
@@ -180,6 +187,33 @@ export default {
     this.getList()
   },
   methods: {
+    //删除图片
+    handleRemove(file){
+      debugger
+     // 1.获取将要删除图片的临时路径
+      const filePath = file.response.data.tmp_path
+      // 2.从pics数组中，找到图片对应的索引值
+      const i = this.formData.pics.findIndex(x => x.pic === filePath)
+      // 3.调用splice方法，移除图片信息
+      this.formData.splice(i, 1)
+    },
+    // 覆盖element的默认上传文件
+    uploadHttpRequest(data) {
+          let that = this
+           that.listLoading = true
+            let formData = new FormData()
+            formData.append("file", data.file)
+            upload(formData).then(res=>{
+                if(res.code == 1){
+                  that.temp.avatarUrl = res.data.path;
+                  that.fileList.push({name: data.file.name, url:  this.serverUrl + res.data.path})
+                }
+               // Just to simulate the time of the request
+              setTimeout(() => {
+                  that.listLoading = false
+                }, 1.5 * 1000)
+            })
+        },
     uploadSuccess(data) {
       console.log(data)
       this.dialogAddFile = data
@@ -202,63 +236,14 @@ export default {
         })
       })
     },
-    /*    getFile(event) {
-      var file = event.target.files
-      for (var i = 0; i < file.length; i++) {
-      //    上传类型判断
-        var imgName = file[i].name
-        var idx = imgName.lastIndexOf('.')
-        if (idx != -1) {
-          var ext = imgName.substr(idx + 1).toUpperCase()
-          ext = ext.toLowerCase()
-          if (ext != 'pdf' && ext != 'doc' && ext != 'docx') {
-          } else {
-            this.addArr.push(file[i])
-          }
-        }
-      }
-    },
-    submitAddFile() {
-      return new Promise((resolve, reject) => {
-        if (this.addArr.length == 0) {
-          this.$message({
-            type: 'info',
-            message: '请选择要上传的文件'
-          })
-          return
-        }
-        var formData = new FormData()
-        formData.append('num', this.addType)
-        formData.append('linkId', this.addId)
-        formData.append('rfilename', this.addFileName)
-        for (var i = 0; i < this.addArr.length; i++) {
-          formData.append('fileUpload', this.addArr[i])
-        }
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': this.token
-          }
-        }
-        this.axios.post('', formData, config)
-          .then((response) => {
-            if (response.data.info == 'success') {
-              this.$message({
-                type: 'success',
-                message: '附件上传成功!'
-              })
-            }
-          })
-      })
-    }, */
     resetAdd() {
       this.addArr = []
     },
     getList() {
       this.listLoading = true
       getList(this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -322,6 +307,12 @@ export default {
     saveData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          var imgs = []
+          this.fileList.forEach(item=>{
+            imgs.push(item.url.replace(this.serverUrl, ""));
+          })
+          this.temp.pictures = JSON.stringify(imgs);
+          this.temp.openTime = this.openTime[0].toLocaleTimeString() + "-" + this.openTime[1].toLocaleTimeString();
           save(this.temp).then(() => {
             this.getList()
             this.dialogFormVisible = false
@@ -336,8 +327,13 @@ export default {
       })
     },
     handleUpdate(obj){
-      this.dialogFormVisible = true;
       this.temp = Object.assign({},obj);
+      // if(this.temp.openTime != undefined && this.temp.openTime.indexOf("-")!=-1){
+      //   var arr = this.temp.openTime.split("-");
+      //   debugger
+      //   this.openTime = [new Date(arr[0]), new Date(arr[1])];
+      // }
+      this.dialogFormVisible = true;
     },
     handleDelete(row, index) {
       delByIds( {ids: [row.id]} ).then(() => {

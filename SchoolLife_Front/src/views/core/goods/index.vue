@@ -31,6 +31,21 @@
           <span>{{ row.info }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="价格"  align="center" >
+        <template slot-scope="{row}">
+          <span>{{ row.price }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="手机号"  align="center" >
+        <template slot-scope="{row}">
+          <span>{{ row.phone }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="微信号"  align="center" >
+        <template slot-scope="{row}">
+          <span>{{ row.wechatId }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="发布人"  align="center" >
         <template slot-scope="{row}">
           <span>{{ getUserName(row.userId) }}</span>
@@ -76,6 +91,15 @@
         <el-form-item label="物品信息" prop="info">
           <el-input v-model="temp.info" type="textarea" />
         </el-form-item>
+        <el-form-item label="价格" prop="price">
+          <el-input v-model="temp.price" type="text" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="temp.phone" type="text" />
+        </el-form-item>
+        <el-form-item label="微信号" prop="wechatId">
+          <el-input v-model="temp.wechatId" type="text" />
+        </el-form-item>
         <el-form-item v-if="temp.id!=undefined" label="发布人" prop="userId">
          <el-select v-model="temp.userId" placeholder="请选择">
             <el-option
@@ -112,6 +136,26 @@
             <el-option key="true" label="已售出" value="true" />
           </el-select>
         </el-form-item>
+         <el-form-item label="图片" >
+          <!-- <el-input v-model="temp.pictures" type="textarea" /> -->
+          <el-upload
+            class="upload-demo"
+            action=""
+            :http-request="uploadFile"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            multiple
+            :limit="3"
+            :on-exceed="handleExceed"
+            list-type="picture-card"
+            :file-list="fileList">
+            <!-- <img v-for="file in fileList" :src="file.url" class="avatar" />  -->
+						<i class="el-icon-plus"></i>
+            <!-- <el-button size="small" type="primary">点击上传</el-button> -->
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -122,34 +166,16 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <!--    <el-dialog title="文件上传" :visible.sync="false" width="500px" style="padding:0;" @close="resetAdd()">
-      文件名称：<el-input v-model="addFileName" autocomplete="off" size="small" style="width: 300px;" />
-      <div class="add-file-right" style="height:70px;margin-left:100px;margin-top:15px;">
-        <div class="add-file-right-img" style="margin-left:70px;">上传文件：</div>
-        <input ref="clearFile" type="file" multiple="multiplt" class="add-file-right-input" style="margin-left:70px;" accept=".docx,.doc,.pdf" @change="getFile($event)">
-        <span class="add-file-right-more">支持扩展名：.doc .docx .pdf </span>
-      </div>
-      <div class="add-file-list">
-        <ul>
-          <li v-for="(item, index) in addArr" :key="index"><a>{{ item.name }}</a></li>
-        </ul>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="submitAddFile()">开始上传</el-button>
-        <el-button size="small" @click="resetAdd()">全部删除</el-button>
-      </div>
-    </el-dialog> -->
-    <el-dialog title="文件上传" :visible.sync="dialogAddFile">
+    <!-- <el-dialog title="文件上传" :visible.sync="dialogAddFile">
       <upload :id="temp.id" @child-event="uploadSuccess" />
-    </el-dialog>
+    </el-dialog> -->
 
   </div>
 </template>
 
 <script>
 import * as user from '@/api/user'
-import { getList, getById, save, delByIds } from '@/api/common'
+import { getList, getById, save, delByIds, uploadFile } from '@/api/common'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -188,6 +214,8 @@ export default {
   },
   data() {
     return {
+      serverUrl: this.SERVERURL,
+      fileList: [],
       target: "goods",
       auditStateText:{"0": "待审核", "1": "已过审", "2": "未过审"},
       stateText: {"false" : "未出售", "true": "已出售"},
@@ -239,6 +267,32 @@ export default {
     this.getList()
   },
   methods: {
+    uploadFile(param){
+      var formData = new FormData()
+      formData.append('file', param.file)
+      uploadFile(formData).then(response => {
+        console.log('上传图片成功')
+        this.fileList.push({
+            name: param.file.name,
+            url: this.SERVERURL  + response.data.path
+          })
+      }).catch(response => {
+        console.log('图片上传失败')
+      })
+    },
+     handleRemove(file, fileList) {
+      this.fileList.splice(this.fileList.indexOf(file),1)
+    },
+    handlePreview(file) {
+      this.dialogImageUrl = file.url;
+		  this.dialogPreviewVisible = true;
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${ file.name }？`);
+    },
     uploadSuccess(data) {
       console.log(data)
       this.dialogAddFile = data
@@ -261,55 +315,7 @@ export default {
         })
       })
     },
-    /*    getFile(event) {
-      var file = event.target.files
-      for (var i = 0; i < file.length; i++) {
-      //    上传类型判断
-        var imgName = file[i].name
-        var idx = imgName.lastIndexOf('.')
-        if (idx != -1) {
-          var ext = imgName.substr(idx + 1).toUpperCase()
-          ext = ext.toLowerCase()
-          if (ext != 'pdf' && ext != 'doc' && ext != 'docx') {
-          } else {
-            this.addArr.push(file[i])
-          }
-        }
-      }
-    },
-    submitAddFile() {
-      return new Promise((resolve, reject) => {
-        if (this.addArr.length == 0) {
-          this.$message({
-            type: 'info',
-            message: '请选择要上传的文件'
-          })
-          return
-        }
-        var formData = new FormData()
-        formData.append('num', this.addType)
-        formData.append('linkId', this.addId)
-        formData.append('rfilename', this.addFileName)
-        for (var i = 0; i < this.addArr.length; i++) {
-          formData.append('fileUpload', this.addArr[i])
-        }
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': this.token
-          }
-        }
-        this.axios.post('', formData, config)
-          .then((response) => {
-            if (response.data.info == 'success') {
-              this.$message({
-                type: 'success',
-                message: '附件上传成功!'
-              })
-            }
-          })
-      })
-    }, */
+
     resetAdd() {
       this.addArr = []
     },
@@ -338,8 +344,8 @@ export default {
     getList() {
       this.listLoading = true
       getList(this.target, this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -400,6 +406,11 @@ export default {
     saveData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          var imgs = [];
+          this.fileList.forEach(item=>{
+            imgs.push(item.url.replace(this.serverUrl, ""))
+          })
+          this.temp.pictures = JSON.stringify(imgs)
           save(this.target, this.temp).then(() => {
             this.getList()
             this.dialogFormVisible = false

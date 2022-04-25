@@ -1,9 +1,10 @@
 import request from '@/utils/request'
 import qs from 'qs'
 
+const baseUrl = "/diet"
 export function getList(page) {
   return request({
-    url: '/canteen/getList',
+    url: baseUrl + '/canteen/getList',
     method: 'get',
     params: page
   })
@@ -11,7 +12,7 @@ export function getList(page) {
 
 export function getById(id) {
   return request({
-    url: '/canteen/getById',
+    url: baseUrl + '/canteen/getById',
     method: 'get',
     params:  id 
   })
@@ -19,7 +20,7 @@ export function getById(id) {
 
 export function save(data) {
   return request({
-    url: '/canteen/save',
+    url: baseUrl + '/canteen/save',
     method: 'post',
     data
   })
@@ -28,7 +29,7 @@ export function save(data) {
 
 export function delByIds(query) {
   return request({
-    url: '/canteen/delByIds',
+    url: baseUrl + '/canteen/delByIds',
     method: 'post',
     params: query,
     paramsSerializer: params => {

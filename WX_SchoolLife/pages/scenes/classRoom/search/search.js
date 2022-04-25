@@ -67,7 +67,7 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载"})
     let that = this;
-    api.post("/classRoom/getListByVo", 
+    api.post("/place/classRoom/getListByVo", 
     {"aimVo": JSON.stringify(that.data.vo)}
     , 0 , 0).then(res=>{
       if(res.code == 1){

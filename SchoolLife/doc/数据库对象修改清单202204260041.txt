@@ -1,0 +1,4 @@
+
+ALTER TABLE `user`
+	CHANGE COLUMN `phone` `phone` VARCHAR(15) DEFAULT NULL COMMENT '手机号码' COLLATE 'utf8_general_ci' AFTER gender;
+

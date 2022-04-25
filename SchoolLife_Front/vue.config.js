@@ -38,7 +38,7 @@ module.exports = {
     },
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: "http://localhost:8090",    // 请求的第三方接口地址
+        target: "http://localhost:8080",    // 请求的第三方接口地址
         ws: true,
         changeOrigin: true,                // 请求跨域时，需配置此项
         secure: false,      // 是否校验（或者说理会）对方https证书

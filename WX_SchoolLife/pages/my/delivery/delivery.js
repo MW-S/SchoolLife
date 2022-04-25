@@ -103,7 +103,7 @@ Page({
     let that = this;
     var ids =  [id],
     a ={a:12312}
-    api.post("/deliveryOrder/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+    api.post("/diet/deliveryOrder/delByIds", {ids: ids}, 0, 0 ).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "删除成功"
@@ -129,7 +129,7 @@ Page({
       vo = that.data.vo
       vo.userId = wx.getStorageSync("user").id
     }
-    api.post("/deliveryOrder/save", vo, 1).then(res=>{
+    api.post("/diet/deliveryOrder/save", vo, 1).then(res=>{
       wx.hideLoading();
       if(res.code == 1){
         wx.showToast({
@@ -151,7 +151,7 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载"})
     let that = this;
-    api.post("/deliveryOrder/getListByVo", {"page": that.data.page.page,
+    api.post("/diet/deliveryOrder/getListByVo", {"page": that.data.page.page,
     "size": that.data.page.size,
       "aimVo": JSON.stringify(that.data.vo)}
    , 0 , 0).then(res=>{

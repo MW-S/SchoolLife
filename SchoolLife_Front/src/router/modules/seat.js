@@ -3,17 +3,23 @@
 import Layout from '@/layout'
 
 const projectRouter = {
-  path: '/seat',
+  path: '/place',
   component: Layout,
   redirect: 'noRedirect',
-  name: 'Seat',
+  name: 'Place',
   meta: {
-    title: '图书馆座位管理',
+    title: '场景管理',
     icon: 'chart'
   },
   children: [
     {
-      path: 'index',
+      path: 'classRoom',
+      component: () => import('@/views/core/classRoom/index'),
+      name: 'SeatList',
+      meta: { title: '教室列表', noCache: true }
+    },
+    {
+      path: 'seat',
       component: () => import('@/views/core/seat/index'),
       name: 'SeatList',
       meta: { title: '座位列表', noCache: true }

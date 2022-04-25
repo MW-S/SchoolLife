@@ -21,6 +21,16 @@
           <span>{{ row.content }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="表白对象" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.receiver }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="表白人" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.writer }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="所属用户" align="center">
         <template slot-scope="{row}">
           <span>{{ getUserName(row.userId) }}</span>
@@ -49,6 +59,12 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="display: flex-direction: column;align-items: center;justify-content: center;">
         <el-form-item label="表白内容" prop="content">
           <el-input v-model="temp.content" type="text" />
+        </el-form-item>
+        <el-form-item label="表白对象" prop="receiver">
+          <el-input v-model="temp.receiver" type="text" />
+        </el-form-item>
+        <el-form-item label="表白人" prop="writer">
+          <el-input v-model="temp.writer" type="text" />
         </el-form-item>
         <el-form-item label="用户" prop="userId">
            <el-select v-model="temp.userId" placeholder="请选择">
@@ -143,7 +159,7 @@ export default {
   },
   data() {
     return {
-      target: "vindicate",
+      target: "entertainment/vindicate",
       stateText: {"true":"可见", "false":"不可见"},
       tableKey: 0,
       list: [],
@@ -304,8 +320,8 @@ export default {
     getList() {
       this.listLoading = true
       getList( this.target, this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false

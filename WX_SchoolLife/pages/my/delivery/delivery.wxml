@@ -2,7 +2,7 @@
 <view class='container'>
     <view class='nav'>
        <view class="one new {{navSelectIndex == 0?'selected':''}}" bindtap='selectNav' data-index="0">
-          我的闲置
+          我的代购
         </view>
        <view class="one {{navSelectIndex == 1?'selected':''}}" bindtap='selectNav' data-index="1">
           我的配送

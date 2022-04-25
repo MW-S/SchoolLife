@@ -3,6 +3,7 @@
   "component": true,
   "navigationStyle": "custom",
   "usingComponents": {
-      "cu-custom":"/colorui/components/cu-custom"
+      "cu-custom":"/colorui/components/cu-custom",
+      "van-uploader": "/component/vant/uploader/index"
   }
 }

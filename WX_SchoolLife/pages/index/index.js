@@ -102,7 +102,7 @@ Page({
     })
   },
   getInfo(){
-    api.get("/auth/info").then(res=>{
+    api.get("/user/auth/info").then(res=>{
       if(res.code == 1){
         wx.setStorageSync('user', res.data.data)
         wx.setStorageSync("noteCount", res.data.noteCount)

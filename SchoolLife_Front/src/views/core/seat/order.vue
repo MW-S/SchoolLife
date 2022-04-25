@@ -347,7 +347,7 @@ export default {
     },
     getSeats(){
       this.listLoading = true
-      common.getList("seat", {
+      common.getList("place/seat", {
         page: 1,
         size: 100,
       }).then(response => {

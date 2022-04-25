@@ -295,8 +295,8 @@ export default {
     getList() {
       this.listLoading = true
       getList( this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -309,7 +309,7 @@ export default {
         page: 1,
         size: 100,
       }).then(response => {
-        this.cars = response.data.data
+        this.cars = response.data.list
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -323,7 +323,7 @@ export default {
         page: 1,
         size: 100,
       }).then(response => {
-        response.data.data.forEach(item=>{
+        response.data.list.forEach(item=>{
           // if(item.state === "false"){
             this.parkings.push(item)
           // }

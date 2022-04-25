@@ -130,7 +130,7 @@ Page({
     let that = this;
     var ids =  [id],
     a ={a:12312}
-    api.post("/vindicate/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+    api.post("/entertainment/vindicate/delByIds", {ids: ids}, 0, 0 ).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -154,7 +154,7 @@ Page({
       content: that.data.content,
       userId: wx.getStorageSync("user").id
     }
-    api.post("/vindicate/save", vo, 1).then(res=>{
+    api.post("/entertainment/vindicate/save", vo, 1).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -170,7 +170,7 @@ Page({
   },
   getList(type = 0){
     let that = this;
-    api.get("/vindicate/getList", that.data.page).then(res=>{
+    api.get("/entertainment/vindicate/getList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.dataList;
         var page = that.data.page;
@@ -197,7 +197,7 @@ Page({
   },
   getListByVo(type = 0){
     let that = this;
-    api.post("/vindicate/getListByVo",
+    api.post("/entertainment/vindicate/getListByVo",
      {"page": that.data.page.page,
      "size": that.data.page.size,
        "aimVo": JSON.stringify(that.data.queryVo)}

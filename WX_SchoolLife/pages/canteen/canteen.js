@@ -41,7 +41,7 @@ Page({
   },
   getList(type = 0){
     let that = this;
-    api.get("/food/getFoodList", that.data.page).then(res=>{
+    api.get("/diet/food/getFoodList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.favorlist;
         var page = that.data.page;

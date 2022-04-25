@@ -250,7 +250,7 @@ export default {
       this.listLoading = true
       getList(this.listQuery).then(response => {
         this.list = response.data.data
-        this.total = response.data.size
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false

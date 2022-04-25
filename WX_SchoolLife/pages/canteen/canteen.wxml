@@ -4,7 +4,7 @@
   <view class='hot_list'>
     <view class='list' wx:for="{{favorlist}}" wx:key="{{id}}">
         <view class='list_l'>
-          <image src='{{item.pictures[0]}}'></image>
+          <image src='{{"http://192.168.162.54:9001" + item.pictures[0]}}'></image>
         </view>
         <view class='list_r' style="padding-left: 10px;">
           <view class='r_title'>菜名：{{item.name}}</view>

@@ -52,7 +52,7 @@ Page({
   save(vo){
     wx.showLoading({title:"正在预约"})
     let that = this;
-    api.post("/seat/saveOrder", vo, 1).then(res=>{
+    api.post("/place/seat/saveOrder", vo, 1).then(res=>{
       wx.hideLoading();
       if(res.code == 1){
         wx.showToast({
@@ -74,7 +74,7 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载"})
     let that = this;
-    api.post("/seat/getListByVo", 
+    api.post("/place/seat/getListByVo", 
     {"aimVo": JSON.stringify(that.data.vo)}
     , 0 , 0).then(res=>{
       if(res.code == 1){

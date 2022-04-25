@@ -16,7 +16,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="动态内容" width="150px" align="center">
+      <el-table-column label="动态内容"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.content }}</span>
         </template>
@@ -26,7 +26,7 @@
           <span>{{ getUserName(row.userId) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态"  align="center" >
+      <el-table-column label="状态" width="150px" align="center" >
         <template slot-scope="{row}">
           <span>{{ stateText[row.state] }}</span>
         </template>
@@ -143,7 +143,7 @@ export default {
   },
   data() {
     return {
-      target: "note",
+      target: "entertainment/note",
       stateText: { "false" : "不可见", "true" : "可见" },
       tableKey: 0,
       list: [],
@@ -304,8 +304,8 @@ export default {
     getList() {
       this.listLoading = true
       getList(this.target, this.listQuery).then(response => {
-        this.list = response.data.data
-        this.total = response.data.size
+        this.list = response.data.list
+        this.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false

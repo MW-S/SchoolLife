@@ -96,7 +96,7 @@ Page({
     let that = this;
     var ids =  [id],
     a ={a:12312}
-    api.post("/note/delByIds", {ids: ids}, 0, 0 ).then(res=>{
+    api.post("/entertainment/note/delByIds", {ids: ids}, 0, 0 ).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -118,7 +118,7 @@ Page({
       content: that.data.note.content,
       userId: wx.getStorageSync("user").id
     }
-    api.post("/note/save", note, 1).then(res=>{
+    api.post("/entertainment/note/save", note, 1).then(res=>{
       if(res.code == 1){
         wx.showToast({
           title: "发送成功"
@@ -135,7 +135,7 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载...."})
     let that = this;
-    api.post("/note/getListByVo",
+    api.post("/entertainment/note/getListByVo",
      {"page": that.data.page.page,
      "size": that.data.page.size,
        "aimVo": JSON.stringify(that.data.vo)}

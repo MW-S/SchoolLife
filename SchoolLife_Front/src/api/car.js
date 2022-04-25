@@ -1,8 +1,9 @@
 import request from '@/utils/request'
+import qs from 'qs'
 
 export function getList(query) {
   return request({
-    url: '/car/getList',
+    url: '/traffic/car/getList',
     method: 'get',
     params: query
   })
@@ -10,7 +11,7 @@ export function getList(query) {
 
 export function getById(id) {
   return request({
-    url: '/car/getById',
+    url: '/traffic/car/getById',
     method: 'get',
     params:  id 
   })
@@ -18,7 +19,7 @@ export function getById(id) {
 
 export function save(data) {
   return request({
-    url: '/car/save',
+    url: '/traffic/car/save',
     method: 'post',
     data
   })
@@ -27,8 +28,13 @@ export function save(data) {
 
 export function delByIds(ids) {
   return request({
-    url: '/car/delByIds',
+    url: '/traffic/car/delByIds',
     method: 'post',
-    ids
+    params: ids,
+    paramsSerializer: params => {
+      return qs.stringify(params, {
+        indices: false
+      })
+    }
   })
 }

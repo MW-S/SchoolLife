@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    This is test Page!
+    
   </div>
 </template>
 

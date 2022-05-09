@@ -12,7 +12,7 @@
         </view>
         <view class="bd">
           <form class="login-form"  catchreset="formReset">
-            <view>
+            <view bind:tap="getJsCode">
               <button  class="login-btn" bind:tap="login">微信一键登录</button>
             </view>
           </form>

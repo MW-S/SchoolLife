@@ -168,25 +168,50 @@ Page({
       console.log(res)
     })
   },
-  // 登录
-  login(e) {
-    wx.getUserProfile({
-      desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-      success: (res) => {
-        res.userInfo.name = res.userInfo.nickName
-        var user = res.userInfo;
-        api.post("/user/auth/login", { userName: 10000, password: 123456 }, 1).then(res=>{
-          wx.setStorageSync('token', res.data.token);
-          wx.setStorageSync('user', user);
-          wx.setStorageSync('login', true);
-          wx.switchTab({ url: '/pages/index/index' });
-        }).catch(res=>{
-          console.log(res)
-        })
-       
-        
+  //获取JsCode
+  getJsCode(){
+    let that = this;
+    wx.login({
+      success (res) {
+        if (res.code) {
+          that.setData({
+           code: res.code
+         })
+        } else {
+          wx.showToast({
+            title: '登录失败',
+          })
+          console.log('登录失败！' + res.errMsg)
+        }
       }
     })
-
+  },
+  // 登录
+   login(e) {
+      wx.getUserProfile({
+        desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        success: (res) => {
+          var aseVo = Object.assign({code: this.data.code}, res);
+          delete aseVo.errMsg;
+          delete aseVo.userInfo;
+          api.post("/user/auth/wxLogin", aseVo, 1).then(res=>{
+            wx.setStorageSync('token', res.data.token);
+            wx.setStorageSync('user',  res.data.user);
+            wx.setStorageSync('login', true);
+            wx.switchTab({ url: '/pages/index/index' });
+          })
+          // .fail(res=>{
+          //   wx.showToast({
+          //     title: '请授权登录',
+          //   })
+          // })
+          .catch(res=>{
+            wx.showToast({
+              title: '授权失败',
+            })
+            console.log(res)
+          })
+        }
+      })
   }
 })

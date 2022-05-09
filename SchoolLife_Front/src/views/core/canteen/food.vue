@@ -21,7 +21,16 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-        <el-table-column label="供应饭堂" width="150px" align="center">
+      <el-table-column  label="饭堂照片" width="120px" align="center">
+        <template slot-scope="{row}" > 
+          <!-- <span class="link-type" @click="handleUpdate(row)">{{ row.avatarUrl }}</span> -->
+           <el-image v-if="row.picture != undefined "
+              style="width: 100px; height: 100px; margin: 0 auto;"
+              :src=" row.picture"
+              ></el-image>
+        </template>
+      </el-table-column>
+      <el-table-column label="供应饭堂" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ getCanteenName(row.canteenId) }}</span>
         </template>
@@ -252,7 +261,7 @@ export default {
         console.log('上传图片成功')
         this.fileList.push({
             name: param.file.name,
-            url: this.SERVERURL  + response.data.path
+            url: response.data.path
           })
       }).catch(response => {
         console.log('图片上传失败')
@@ -294,9 +303,13 @@ export default {
       getList(that.target, that.listQuery).then(response => {
         response.data.list.forEach(item=>{
           // item.canteen = that.getCanteenName(item.id)
+          if(item.pictures != null && item.pictures != undefined && item.pictures != ""){
+            var imgs = JSON.parse(item.pictures);
+            item.picture = imgs.length != 0? imgs[0]: undefined;
+          }
           that.list.push(item)
         })
-        that.total = response.data.size
+        that.total = response.data.total
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -359,6 +372,7 @@ export default {
         id: undefined,
         name: ''
       }
+      this.fileList = [];
     },
     handleCreate() {
       this.resetTemp()
@@ -370,6 +384,11 @@ export default {
     saveData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          var imgs = []
+          this.fileList.forEach(item=>{
+            imgs.push(item.url);
+          })
+          this.temp.pictures = JSON.stringify(imgs);
           save(this.target, this.temp).then(() => {
             this.getList()
             this.dialogFormVisible = false
@@ -384,8 +403,13 @@ export default {
       })
     },
     handleUpdate(obj){
+      this.resetTemp();
       this.dialogFormVisible = true;
       this.temp = Object.assign({},obj);
+      var imgs = obj.pictures != null?JSON.parse(obj.pictures):[];
+      imgs.forEach(item=>{
+        this.fileList.push({name: item, url: item})
+      })
     },
     handleDelete(row, index) {
       delByIds(this.target, {ids: [row.id]} ).then(() => {

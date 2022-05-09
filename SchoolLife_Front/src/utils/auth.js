@@ -15,13 +15,13 @@ export function removeToken() {
 }
 
 export function getJWTToken() {
-  return Cookies.get('Authorization')
+  return localStorage.getItem('Authorization')
 }
 
 export function setJWTToken(token) {
-  return Cookies.set('Authorization', 'Bearer ' + token)
+  return localStorage.setItem("Authorization",'Bearer ' + token);
 }
 
 export function removeJWTToken() {
-  return Cookies.remove('Authorization')
+  return localStorage.removeItem('Authorization')
 }

@@ -23,6 +23,9 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
+  SET_USER: (state, user) => {
+    state.user = user
+  },
   SET_ROLES: (state, roles) => {
     state.roles = roles
   }
@@ -73,8 +76,9 @@ const actions = {
         }
 
         commit('SET_ROLES', roles)
-        // commit('SET_NAME', name)
-        // commit('SET_AVATAR', avatar)
+        commit('SET_NAME', data.data.name)
+        commit('SET_AVATAR', data.data.avatarUrl)
+        commit('SET_USER', data.data)
         // commit('SET_INTRODUCTION', introduction)
         resolve(data)
       }).catch(error => {

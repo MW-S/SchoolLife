@@ -19,85 +19,79 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <!-- <el-table-column label="用户编号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="Avatar" min-width="150px">
-        <template slot-scope="{row}">
+      </el-table-column> -->
+      <el-table-column  label="头像" min-width="150px">
+        <template slot-scope="{row}" > 
           <!-- <span class="link-type" @click="handleUpdate(row)">{{ row.avatarUrl }}</span> -->
            <el-image v-if="row.avatarUrl != undefined && row.avatarUrl != null && row.avatarUrl != ''"
-              style="width: 100px; height: 100px"
-              :src=" fileServerUrl + row.avatarUrl"
-              :fit="fit"></el-image>
+              style="width: 100px; height: 100px; margin: 0 auto;"
+              :src="  row.avatarUrl"
+              ></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="Name" min-width="150px">
+      <el-table-column label="名称" min-width="150px">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Gender" class-name="status-col" width="100">
+      <el-table-column label="性别" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <span>{{ row.gender | genderFileter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Type" width="110px" align="center">
+      <el-table-column label="类型" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.type | typeFileter }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Account" align="center" width="95">
+      <el-table-column label="账号" align="center" width="95">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Phone" width="100">
+      <el-table-column label="手机号" width="110">
         <template slot-scope="{row}">
           <span :type="row.phone ">
             {{ row.phone }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="Account" align="center" width="95">
-        <template slot-scope="{row}">
-          <span>{{ row.userName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Number" align="center" width="95"  v-if="listQuery.type == 0">
+      <el-table-column label="学号" align="center" width="95"  v-if="listQuery.type == 0">
         <template slot-scope="{row}">
           <span>{{ row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="CarID" align="center" width="95"  v-if="listQuery.type == 0">
+      <el-table-column label="车牌号" align="center" width="95"  v-if="listQuery.type == 0">
         <template slot-scope="{row}">
           <span>{{ row.carId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Picture" align="center" width="150"  v-if="listQuery.type == 0">
+      <el-table-column label="汽车图片" align="center" width="150"  v-if="listQuery.type == 0">
         <template slot-scope="{row}">
            <el-image  v-if="row.carPicture != undefined && row.carPicture != null && row.carPicture != ''"
               style="width: 100px; height: 100px"
-              :src=" fileServerUrl + row.carPicture"
+              :src=" row.carPicture"
               :fit="fit"></el-image>
         </template>
       </el-table-column>
-      <el-table-column label="CreateTime" width="100">
+      <el-table-column label="创建时间" width="100">
         <template slot-scope="{row}">
           <span>
             {{ row.gmtCreate }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
+          <el-button type="primary" size="mini" @click="changeState(row)">
+            {{row.isLocked === "0"?"锁定":"解锁"}}
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
-            Delete
-          </el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -105,7 +99,7 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Avatar" prop="avatar">
+        <el-form-item label="头像" prop="avatar">
             <el-upload 
               class="upload-demo"
               action="#"
@@ -119,22 +113,22 @@
             <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
-        <el-form-item label="Name" prop="name">
+        <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name" type="text" />
         </el-form-item>
-        <el-form-item label="Gender" prop="gender">
+        <el-form-item label="性别" prop="gender">
           <el-radio-group v-model="temp.gender">
             <el-radio label="1" name="male">男</el-radio>
             <el-radio label="0" name="female">女</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="Account" prop="account" v-if="temp.id != undefined">
+        <el-form-item label="账号" prop="account" v-if="temp.id != undefined">
           <el-input v-model="temp.userName" disabled />
         </el-form-item>
-        <el-form-item label="Phone" prop="phone">
+        <el-form-item label="手机号" prop="phone">
           <el-input v-model="temp.phone" />
         </el-form-item>
-        <el-form-item v-if="listQuery.type == 0" label="CarID" prop="carId" label-width="100px">
+        <el-form-item v-if="listQuery.type == 0" label="车牌号" prop="carId" label-width="100px">
           <el-input v-model="temp.carId" />
         </el-form-item>
         <!-- <el-form-item v-if="listQuery.type == 0" label="Picture" prop="picture">
@@ -149,13 +143,13 @@
           />
             <el-button size="small" type="primary">点击上传</el-button>
         </el-form-item> -->
-        <el-form-item v-if="listQuery.type == 0" label="CarPicture" prop="carPicture" label-width="100px">
+        <el-form-item v-if="listQuery.type == 0" label="汽车照片" prop="carPicture" label-width="100px">
            <el-image v-if="temp.carPicture != null"
               style="width: 100px; height: 100px"
-              :src=" fileServerUrl + temp.carPicture"
+              :src="temp.carPicture"
               :fit="fit"></el-image>
         </el-form-item>
-        <el-form-item v-if="listQuery.type == 0" label="Number" prop="number" label-width="100px">
+        <el-form-item v-if="listQuery.type == 0" label="学号" prop="number" label-width="100px">
           <el-input v-model="temp.number" />
         </el-form-item>
       </el-form>
@@ -280,7 +274,7 @@ export default {
             upload(formData).then(res=>{
                 if(res.code == 1){
                   that.temp.avatarUrl = res.data.path;
-                   this.fileList = [{name: data.file.name, url: this.serverUrl + res.data.path}]
+                   this.fileList = [{name: data.file.name, url:  res.data.path}]
                 }
                // Just to simulate the time of the request
               setTimeout(() => {
@@ -371,6 +365,8 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+      this.temp.avatarUrl = row.avatarUrl;
+      this.fileList = [{name: row.avatarUrl, url:  row.avatarUrl}]
     },
     saveUser(){
           if(this.temp.id != undefined && this.temp.id != null && this.temp.id != ""){
@@ -397,6 +393,22 @@ export default {
             })   
         }
       })
+    },
+    changeState(row) {
+          const tempData = {
+            id: row.id,
+            isLocked: row.isLocked == "0"? "1":"0"
+          }
+            updateUser(tempData).then(() => {
+              const index = this.list.findIndex(v => v.id === tempData.id)
+              this.list[index].isLocked = tempData.isLocked
+              this.$notify({
+                title: 'Success',
+                message: 'Update Successfully',
+                type: 'success',
+                duration: 2000
+              })
+            })   
     },
     handleDelete(row, index) {
       const tempData = Object.assign({}, row)
@@ -436,4 +448,7 @@ export default {
 </script>
 
 <style>
+.cell{
+  text-align: center;
+}
 </style>

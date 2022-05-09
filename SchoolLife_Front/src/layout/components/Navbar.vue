@@ -24,19 +24,19 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/createProject/index">
+          <!-- <router-link to="/createProject/index">
             <el-dropdown-item>Create Project</el-dropdown-item>
           </router-link>
           <a href="#" @click="dialogJoinVisible = true">
             <el-dropdown-item>Join Project</el-dropdown-item>
-          </a>
-          <!--          <router-link to="/">
+          </a> -->
+          <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
+          <a target="_blank" href="https://github.com/MW-S/SchoolLife/tree/main/SchoolLife_Front">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <!-- <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
           </a> -->
           <el-dropdown-item divided @click.native="logout">
@@ -45,7 +45,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog title="Join Project" :visible.sync="dialogJoinVisible">
+    <!-- <el-dialog title="Join Project" :visible.sync="dialogJoinVisible">
       <el-form ref="joinForm" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Code" prop="joinCode">
           <el-input v-model="joinCode" type="text" />
@@ -59,11 +59,12 @@
           Confirm
         </el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
+import { removeJWTToken } from '@/utils/auth'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -99,8 +100,8 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
+    logout() {
+      removeJWTToken()
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
     join() {

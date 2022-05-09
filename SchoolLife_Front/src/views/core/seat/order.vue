@@ -31,6 +31,11 @@
           <span>{{ row.useTime + "小时"}}</span>
         </template>
       </el-table-column>
+       <el-table-column label="订单状态"  align="center" >
+        <template slot-scope="{row}">
+          <span>{{ row.state | stateFilter }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="开始时间"  align="center" >
         <template slot-scope="{row}">
           <span>{{ row.gmtCreate }}</span>
@@ -53,7 +58,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="display: flex-direction: column;align-items: center;justify-content: center;">
         <el-form-item label="座位" prop="seatId">
-          <el-select v-model="temp.seatId" placeholder="请选择">
+          <el-select v-model="temp.seatId" placeholder="请选择座位">
             <el-option
               v-for="item in seats"
               :disabled="hasSeat(item.id)"
@@ -64,7 +69,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="使用人" prop="userId">
-          <el-select v-model="temp.userId" placeholder="请选择">
+          <el-select v-model="temp.userId" placeholder="请选择使用人">
             <el-option
               v-for="item in users"
               :disabled="hasUser(item.id)"
@@ -74,8 +79,14 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="订单状态" prop="state">
+          <el-select v-model="temp.state" placeholder="请选择状态">
+            <el-option key="0" label="未结束" value="0"></el-option>
+            <el-option key="1" label="已结束" value="1"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="使用时间" prop="useTime">
-          <el-select v-model="temp.useTime" value-key="value" placeholder="请选择">
+          <el-select v-model="temp.useTime" value-key="value" placeholder="请选择使用时间">
             <el-option
               v-for="(item, index) in times"
               :key="index"
@@ -94,28 +105,6 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <!--    <el-dialog title="文件上传" :visible.sync="false" width="500px" style="padding:0;" @close="resetAdd()">
-      文件名称：<el-input v-model="addFileName" autocomplete="off" size="small" style="width: 300px;" />
-      <div class="add-file-right" style="height:70px;margin-left:100px;margin-top:15px;">
-        <div class="add-file-right-img" style="margin-left:70px;">上传文件：</div>
-        <input ref="clearFile" type="file" multiple="multiplt" class="add-file-right-input" style="margin-left:70px;" accept=".docx,.doc,.pdf" @change="getFile($event)">
-        <span class="add-file-right-more">支持扩展名：.doc .docx .pdf </span>
-      </div>
-      <div class="add-file-list">
-        <ul>
-          <li v-for="(item, index) in addArr" :key="index"><a>{{ item.name }}</a></li>
-        </ul>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="submitAddFile()">开始上传</el-button>
-        <el-button size="small" @click="resetAdd()">全部删除</el-button>
-      </div>
-    </el-dialog> -->
-    <el-dialog title="文件上传" :visible.sync="dialogAddFile">
-      <upload :id="temp.id" @child-event="uploadSuccess" />
-    </el-dialog>
-
   </div>
 </template>
 
@@ -157,7 +146,14 @@ export default {
         2: 'danger'
       }
       return statusMap[status]
-    }
+    },
+    stateFilter(state) {
+      const stateMap = {
+        0: '未结束',
+        1: '已结束'
+      }
+      return stateMap[state]
+    },
   },
   data() {
     return {
@@ -244,55 +240,6 @@ export default {
         })
       })
     },
-    /*    getFile(event) {
-      var file = event.target.files
-      for (var i = 0; i < file.length; i++) {
-      //    上传类型判断
-        var imgName = file[i].name
-        var idx = imgName.lastIndexOf('.')
-        if (idx != -1) {
-          var ext = imgName.substr(idx + 1).toUpperCase()
-          ext = ext.toLowerCase()
-          if (ext != 'pdf' && ext != 'doc' && ext != 'docx') {
-          } else {
-            this.addArr.push(file[i])
-          }
-        }
-      }
-    },
-    submitAddFile() {
-      return new Promise((resolve, reject) => {
-        if (this.addArr.length == 0) {
-          this.$message({
-            type: 'info',
-            message: '请选择要上传的文件'
-          })
-          return
-        }
-        var formData = new FormData()
-        formData.append('num', this.addType)
-        formData.append('linkId', this.addId)
-        formData.append('rfilename', this.addFileName)
-        for (var i = 0; i < this.addArr.length; i++) {
-          formData.append('fileUpload', this.addArr[i])
-        }
-        const config = {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': this.token
-          }
-        }
-        this.axios.post('', formData, config)
-          .then((response) => {
-            if (response.data.info == 'success') {
-              this.$message({
-                type: 'success',
-                message: '附件上传成功!'
-              })
-            }
-          })
-      })
-    }, */
     resetAdd() {
       this.addArr = []
     },
@@ -326,7 +273,7 @@ export default {
     hasUser(id){
       var res = false;
       this.list.forEach(item=>{
-        if(item.userId == id){
+        if(item.userId == id && item.state == 0){
           res =  true;
         }
       })
@@ -351,7 +298,7 @@ export default {
         page: 1,
         size: 100,
       }).then(response => {
-        this.seats = response.data.data
+        this.seats = response.data.list
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -361,7 +308,7 @@ export default {
     getList() {
       this.listLoading = true
       getList(this.listQuery).then(response => {
-        this.list = response.data.data
+        this.list = response.data.list
         this.total = response.data.size
         // Just to simulate the time of the request
         setTimeout(() => {

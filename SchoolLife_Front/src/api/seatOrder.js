@@ -3,7 +3,7 @@ import qs from 'qs'
 
 export function getList(query) {
   return request({
-    url: '/seat/getOrderList',
+    url: '/place/seat/getOrderList',
     method: 'get',
     params: query
   })
@@ -11,7 +11,7 @@ export function getList(query) {
 
 export function getById(id) {
   return request({
-    url: '/seat/getOrderById',
+    url: '/place/seat/getOrderById',
     method: 'get',
     params:  id 
   })
@@ -19,7 +19,7 @@ export function getById(id) {
 
 export function save(data) {
   return request({
-    url: '/seat/saveOrder',
+    url: '/place/seat/saveOrder',
     method: 'post',
     data
   })
@@ -28,7 +28,7 @@ export function save(data) {
 
 export function delByIds(ids) {
   return request({
-    url: '/seat/delOrderByIds',
+    url: '/place/seat/delOrderByIds',
     method: 'post',
     params: ids,
     paramsSerializer: params => {

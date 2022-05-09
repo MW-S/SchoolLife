@@ -26,7 +26,7 @@ export function save(data) {
 }
 
 
-export function delByIds(ids) {
+export function delOrderByIds(ids) {
   return request({
     url: '/traffic/parking/delOrderByIds',
     method: 'post',

@@ -16,7 +16,7 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="车牌号"  align="center">
+      <el-table-column label="车牌号"  prop="number"  align="center">
         <template slot-scope="{row}">
           <span>{{ row.number }}</span>
         </template>
@@ -334,7 +334,7 @@ export default {
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: 'Update Successfully',
+          message: 'Delete Successfully',
           type: 'success',
           duration: 2000
         })

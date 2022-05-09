@@ -26,6 +26,15 @@
           <span>{{ row.openTime }}</span>
         </template>
       </el-table-column>
+      <el-table-column  label="饭堂图片" width="120px" align="center">
+        <template slot-scope="{row}" > 
+          <!-- <span class="link-type" @click="handleUpdate(row)">{{ row.avatarUrl }}</span> -->
+           <el-image v-if="row.picture != undefined "
+              style="width: 100px; height: 100px; margin: 0 auto;"
+              :src=" row.picture"
+              ></el-image>
+        </template>
+      </el-table-column>
       <el-table-column label="饭堂地点"  align="center" >
         <template slot-scope="{row}">
           <span>{{ row.location }}</span>
@@ -189,7 +198,6 @@ export default {
   methods: {
     //删除图片
     handleRemove(file){
-      debugger
      // 1.获取将要删除图片的临时路径
       const filePath = file.response.data.tmp_path
       // 2.从pics数组中，找到图片对应的索引值
@@ -206,7 +214,7 @@ export default {
             upload(formData).then(res=>{
                 if(res.code == 1){
                   that.temp.avatarUrl = res.data.path;
-                  that.fileList.push({name: data.file.name, url:  this.serverUrl + res.data.path})
+                  that.fileList.push({name: data.file.name, url: res.data.path})
                 }
                // Just to simulate the time of the request
               setTimeout(() => {
@@ -214,28 +222,6 @@ export default {
                 }, 1.5 * 1000)
             })
         },
-    uploadSuccess(data) {
-      console.log(data)
-      this.dialogAddFile = data
-      this.$notify({
-        title: 'Success',
-        message: 'Upload Successfully',
-        type: 'success',
-        duration: 2000
-      })
-      const tempData = Object.assign({}, this.temp)
-      updateTask(tempData).then(() => {
-        const index = this.list.findIndex(v => v.id === tempData.id)
-        this.list.splice(index, 1, tempData)
-        this.dialogFormVisible = false
-        this.$notify({
-          title: 'Success',
-          message: 'Update Successfully',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
     resetAdd() {
       this.addArr = []
     },
@@ -245,6 +231,13 @@ export default {
         this.list = response.data.list
         this.total = response.data.total
         // Just to simulate the time of the request
+        this.list.forEach(item=>{
+          if(item.pictures != null && item.pictures != undefined && item.pictures != ""){
+            var imgs = JSON.parse(item.pictures);
+            item.picture = imgs.length != 0? imgs[0]: undefined;
+          }
+         
+        })
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -296,6 +289,7 @@ export default {
         descript: '',
         state: ''
       }
+      this.fileList = []
     },
     handleCreate() {
       this.resetTemp()
@@ -309,7 +303,7 @@ export default {
         if (valid) {
           var imgs = []
           this.fileList.forEach(item=>{
-            imgs.push(item.url.replace(this.serverUrl, ""));
+            imgs.push(item.url);
           })
           this.temp.pictures = JSON.stringify(imgs);
           this.temp.openTime = this.openTime[0].toLocaleTimeString() + "-" + this.openTime[1].toLocaleTimeString();
@@ -327,12 +321,12 @@ export default {
       })
     },
     handleUpdate(obj){
+      this.resetTemp()
       this.temp = Object.assign({},obj);
-      // if(this.temp.openTime != undefined && this.temp.openTime.indexOf("-")!=-1){
-      //   var arr = this.temp.openTime.split("-");
-      //   debugger
-      //   this.openTime = [new Date(arr[0]), new Date(arr[1])];
-      // }
+      var imgs = obj.pictures != null?JSON.parse(obj.pictures):[];
+      imgs.forEach(item=>{
+        this.fileList.push({name: item, url: item})
+      })
       this.dialogFormVisible = true;
     },
     handleDelete(row, index) {

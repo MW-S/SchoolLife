@@ -26,6 +26,14 @@
           <span>{{ row.type }}</span>
         </template>
       </el-table-column>
+      <el-table-column  label="物品图片" width="120px" align="center">
+        <template slot-scope="{row}" > 
+           <el-image v-if="row.picture != undefined "
+              style="width: 100px; height: 100px; margin: 0 auto;"
+              :src=" row.picture"
+              ></el-image>
+        </template>
+      </el-table-column>
       <el-table-column label="物品信息"  align="center" >
         <template slot-scope="{row}">
           <span>{{ row.info }}</span>
@@ -36,12 +44,12 @@
           <span>{{ row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="手机号"  align="center" >
+      <el-table-column label="手机号" width="110px" align="center" >
         <template slot-scope="{row}">
           <span>{{ row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="微信号"  align="center" >
+      <el-table-column label="微信号" width="110px" align="center" >
         <template slot-scope="{row}">
           <span>{{ row.wechatId }}</span>
         </template>
@@ -274,7 +282,7 @@ export default {
         console.log('上传图片成功')
         this.fileList.push({
             name: param.file.name,
-            url: this.SERVERURL  + response.data.path
+            url: response.data.path
           })
       }).catch(response => {
         console.log('图片上传失败')
@@ -347,6 +355,12 @@ export default {
         this.list = response.data.list
         this.total = response.data.total
         // Just to simulate the time of the request
+        this.list.forEach(item=>{
+          if(item.pictures != null && item.pictures != undefined && item.pictures != ""){
+            var imgs = JSON.parse(item.pictures);
+            item.picture = imgs.length != 0? imgs[0]: undefined;
+          }
+        })
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -395,6 +409,7 @@ export default {
         id: undefined,
         state: 0
       }
+      this.fileList = []
     },
     handleCreate() {
       this.resetTemp()
@@ -406,11 +421,11 @@ export default {
     saveData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          var imgs = [];
+          var imgs = []
           this.fileList.forEach(item=>{
-            imgs.push(item.url.replace(this.serverUrl, ""))
+            imgs.push(item.url);
           })
-          this.temp.pictures = JSON.stringify(imgs)
+          this.temp.pictures = JSON.stringify(imgs);
           save(this.target, this.temp).then(() => {
             this.getList()
             this.dialogFormVisible = false
@@ -425,8 +440,13 @@ export default {
       })
     },
     handleUpdate(obj){
-      this.dialogFormVisible = true;
+      this.resetTemp()
       this.temp = Object.assign({},obj);
+      var imgs = obj.pictures != null?JSON.parse(obj.pictures):[];
+      imgs.forEach(item=>{
+        this.fileList.push({name: item, url: item})
+      })
+      this.dialogFormVisible = true;
     },
     handleDelete(row, index) {
       delByIds(this.target, {ids: [row.id]} ).then(() => {

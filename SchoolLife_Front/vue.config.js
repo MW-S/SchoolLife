@@ -13,7 +13,7 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following method:
 // port = 9527 npm run dev OR npm run dev --port = 9527
-const port = process.env.port || process.env.npm_config_port || 8000 // dev port
+const port = process.env.port || process.env.npm_config_port || 7000 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -37,6 +37,13 @@ module.exports = {
       errors: true
     },
     proxy: {
+      '/school': {
+        target:  "http://192.168.161.171:9001",
+        ws: true,
+        changeOrigin: true,
+        secure: false,      // 是否校验（或者说理会）对方https证书
+        logLevel: 'debug'  // 日志等级，默认可以不配置用于调试时打印一些代理信息
+      },
       [process.env.VUE_APP_BASE_API]: {
         target: "http://localhost:8080",    // 请求的第三方接口地址
         ws: true,

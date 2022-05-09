@@ -106,7 +106,7 @@
 
 <script>
 import * as common from '@/api/common'
-import { getList, getById, save, delByIds } from '@/api/parkingOrder'
+import { getList, getById, save, delOrderByIds } from '@/api/parkingOrder'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -305,11 +305,11 @@ export default {
     },
     getCars() {
       this.listLoading = true
-      common.getList("car", {
+      common.getList("traffic/car", {
         page: 1,
         size: 100,
       }).then(response => {
-        this.cars = response.data.list
+        this.cars = response.data.data
         // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
@@ -319,7 +319,7 @@ export default {
     getParkings() {
       this.listLoading = true
       this.parkings = []
-      common.getList("parking", {
+      common.getList("traffic/parking", {
         page: 1,
         size: 100,
       }).then(response => {
@@ -404,12 +404,14 @@ export default {
       this.temp = Object.assign({},obj);
     },
     handleDelete(row, index) {
-      delByIds( {ids: [row.id]} ).then(() => {
+      delOrderByIds( {ids: [row.id]} ).then(() => {
+        this.getCars()
+        this.getParkings()
         this.getList()
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: 'Update Successfully',
+          message: 'Delete Successfully',
           type: 'success',
           duration: 2000
         })

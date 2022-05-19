@@ -9,24 +9,25 @@ Page({
     imgbox: [],
     stateText: ["未出售", "已出售"],
     vo:{userId: wx.getStorageSync("user").id},
-    dataList: [{
-      name: "xxx",
-      type: "鞋子",
-      price: "100",
-      info: "超级好的二手货",
-      pictures: ['../../img/add.png', '../../img/add.png', '../../img/add.png'],
-      state: 0,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
-    },
-    {
-      name: "xxx",
-      type: "衣服",
-      price: "1001",
-      info: "超级好的二手货",
-      pictures: ["../../img/add.png","../../img/add.png","../../img/add.png"],
-      state: 1,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
-    }
+    dataList: [
+    //   {
+    //   name: "xxx",
+    //   type: "鞋子",
+    //   price: "100",
+    //   info: "超级好的二手货",
+    //   pictures: ['../../img/add.png', '../../img/add.png', '../../img/add.png'],
+    //   state: 0,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
+    // },
+    // {
+    //   name: "xxx",
+    //   type: "衣服",
+    //   price: "1001",
+    //   info: "超级好的二手货",
+    //   pictures: ["../../img/add.png","../../img/add.png","../../img/add.png"],
+    //   state: 1,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0]
+    // }
   ],
     total: 0,
     page:{
@@ -112,16 +113,17 @@ Page({
   },
   getList(type = 0){
     let that = this;
+    if(type == 0){
+      that.setData({
+        dataList: [],
+        "page.page": 1
+      })
+    }
     api.get("/goods/getList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.dataList;
         var page = that.data.page;
-        if(type == 0){
-          list = [];
-          page.page = 1
-        }else{
-          page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
-        }
+        page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
           item.pictures = JSON.parse(item.pictures);
@@ -176,7 +178,7 @@ Page({
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

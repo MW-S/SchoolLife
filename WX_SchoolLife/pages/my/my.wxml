@@ -1,11 +1,11 @@
 <scroll-view scroll-y class="scrollPage">
   <view class="UCenter-bg">
-
-
-    <view class='avatar'>
-      <open-data type="userAvatarUrl"></open-data>
+    <view class='avatar' style="width:200rpx;height:200rpx">
+      <!-- <open-data type="userAvatarUrl"></open-data> -->
+      <image mode="scaleToFill" src="{{fileServerUrl + user.avatarUrl}}"></image>
     </view>
-    <open-data type="userNickName"></open-data>
+   <view>{{user.name}}</view>
+    <!-- <open-data type="userNickName"></open-data> -->
     <text class="text-df"></text>
 
     <view class="margin-top-sm">
@@ -65,10 +65,10 @@
       </view>
     </view>
     <view class="cu-item arrow">
-      <view class="content" open-type="feedback">
-        <text class="cuIcon-formfill text-grey"></text>
-        <text class="text-grey">BUG反馈</text>
-      </view>
+      <button class="content" open-type="feedback">
+        <text class="cuIcon-formfill text-grey" style="float: left;"></text>
+        <text class="text-grey"  style="float: left;">BUG反馈</text>
+      </button>
     </view>
     <view class="cu-item arrow" bindtap="logout">
       <view class="content" >
@@ -89,9 +89,9 @@
               宿舍：{{dormitories[dormitoryIndex].locationName}}
           </view>
       </picker>
-      <picker wx:if="{{type==1}}" class="picker" bindchange="bindVal" data-field="carIndex" value="{{carIndex}}" range="{{cars}}" range-key="{{'number'}}">
+      <picker wx:if="{{type==1}}" disabled="{{true}}" class="picker" >
          <view >
-            车辆：{{cars[carIndex].number}}
+            车辆：{{carId == null?'未绑定':carId}}
          </view>
       </picker>
       <view class="picker" wx:if="{{type==1}}" style="display: flex;margin-top: 20px;justify-content: center;">

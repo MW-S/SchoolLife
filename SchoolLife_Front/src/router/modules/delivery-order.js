@@ -9,7 +9,7 @@ const projectRouter = {
   name: 'DeliveryOrder',
   meta: {
     title: '跑腿管理',
-    icon: 'chart'
+    icon: 'delivery'
   },
   children: [
     {

@@ -20,26 +20,28 @@ Page({
     navSelectIndex:0,
     shophelper0: [],
     shophelper1: [],
-    list:[{
-      avatar: "/img/goods.png",
-      user: "xxx",
-      name: "可比克薯片",
-      address: "阿拉斯加",
-      price: 100,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
-      tag: "",
-      state: 0
-    },
-    {
-      avatar: "/img/goods.png",
-      user: "xxx",
-      name: "可比克薯片",
-      address: "阿拉斯加",
-      price: 100,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
-      tag: "",
-      state: 1
-    }]
+    list:[
+    //   {
+    //   avatar: "/img/goods.png",
+    //   user: "xxx",
+    //   name: "可比克薯片",
+    //   address: "阿拉斯加",
+    //   price: 100,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+    //   tag: "",
+    //   state: 0
+    // },
+    // {
+    //   avatar: "/img/goods.png",
+    //   user: "xxx",
+    //   name: "可比克薯片",
+    //   address: "阿拉斯加",
+    //   price: 100,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+    //   tag: "",
+    //   state: 1
+    // }
+  ]
   },
   formatTime(e){
     if(e == undefined)
@@ -151,17 +153,16 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载"})
     let that = this;
+    var list = that.data.dataList;
+    var page = that.data.page;
+    if(type == 0){
+      list = [], page.page = 1;
+    }
     api.post("/diet/deliveryOrder/getListByVo", {"page": that.data.page.page,
     "size": that.data.page.size,
       "aimVo": JSON.stringify(that.data.vo)}
    , 0 , 0).then(res=>{
       if(res.code == 1){
-        var list = that.data.dataList;
-        var page = that.data.page;
-        if(type == 0){
-          list = [];
-          page.page = 1
-        }
         page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         
         res.data.list.forEach(item=>{
@@ -187,7 +188,7 @@ Page({
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

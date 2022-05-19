@@ -257,7 +257,7 @@ Page({
       url: '/pages/' + path,
       fail: function () {
         wx.showToast({
-          title: '即将开放',
+          title: '敬请期待',
           icon: 'none'
         })
       }

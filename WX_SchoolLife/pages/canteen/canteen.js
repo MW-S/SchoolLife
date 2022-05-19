@@ -1,6 +1,8 @@
 const api = require('../../utils/api.js');
+const app = getApp();
 Page({
   data: {
+    fileServerUrl:  app.globalData.fileServerUrl,
     title: '喜爱菜品',
     typeText: ["早餐", "午餐", "晚餐", "宵夜"],
     favorlist: [
@@ -73,7 +75,7 @@ Page({
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

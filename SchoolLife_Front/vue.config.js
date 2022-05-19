@@ -38,14 +38,14 @@ module.exports = {
     },
     proxy: {
       '/school': {
-        target:  "http://192.168.161.171:9001",
+        target:  "http://120.25.235.215",
         ws: true,
         changeOrigin: true,
         secure: false,      // 是否校验（或者说理会）对方https证书
         logLevel: 'debug'  // 日志等级，默认可以不配置用于调试时打印一些代理信息
       },
       [process.env.VUE_APP_BASE_API]: {
-        target: "http://localhost:8080",    // 请求的第三方接口地址
+        target: "http://120.25.235.215/prod",    // 请求的第三方接口地址
         ws: true,
         changeOrigin: true,                // 请求跨域时，需配置此项
         secure: false,      // 是否校验（或者说理会）对方https证书

@@ -9,7 +9,7 @@ const userRouter = {
   name: 'User',
   meta: {
     title: '用户管理',
-    icon: 'chart'
+    icon: 'user'
   },
   children: [
     {

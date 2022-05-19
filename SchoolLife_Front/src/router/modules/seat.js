@@ -9,7 +9,7 @@ const projectRouter = {
   name: 'Place',
   meta: {
     title: '场景管理',
-    icon: 'chart'
+    icon: 'place'
   },
   children: [
     {

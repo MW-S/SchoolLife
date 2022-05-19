@@ -9,7 +9,7 @@ const projectRouter = {
   name: 'Parking',
   meta: {
     title: '停车场管理',
-    icon: 'chart'
+    icon: 'traffic'
   },
   children: [
     {

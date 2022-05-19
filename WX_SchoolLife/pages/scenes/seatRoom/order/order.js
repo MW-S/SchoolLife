@@ -75,7 +75,7 @@ Page({
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

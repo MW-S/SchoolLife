@@ -9,7 +9,7 @@ const projectRouter = {
   name: 'Canteen',
   meta: {
     title: '饭堂管理',
-    icon: 'chart'
+    icon: 'canteen'
   },
   children: [
     {

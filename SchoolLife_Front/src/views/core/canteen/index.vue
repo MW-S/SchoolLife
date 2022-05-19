@@ -199,11 +199,14 @@ export default {
     //删除图片
     handleRemove(file){
      // 1.获取将要删除图片的临时路径
-      const filePath = file.response.data.tmp_path
+      const filePath = file.response == undefined? file.url:file.response.data.tmp_path
       // 2.从pics数组中，找到图片对应的索引值
-      const i = this.formData.pics.findIndex(x => x.pic === filePath)
+      const i = file.response == undefined?this.fileList.findIndex(x => x.url === filePath):this.formData.pics.findIndex(x => x.pic === filePath)
       // 3.调用splice方法，移除图片信息
-      this.formData.splice(i, 1)
+      if(file.response == undefined){
+        this.fileList.splice(i, 1)
+      }else
+        this.formData.splice(i, 1)
     },
     // 覆盖element的默认上传文件
     uploadHttpRequest(data) {
@@ -312,7 +315,7 @@ export default {
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Created Successfully',
+              message: 'Successfully',
               type: 'success',
               duration: 2000
             })
@@ -335,7 +338,7 @@ export default {
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: 'Update Successfully',
+          message: 'Delete Successfully',
           type: 'success',
           duration: 2000
         })

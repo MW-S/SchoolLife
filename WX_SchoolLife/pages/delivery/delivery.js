@@ -20,26 +20,28 @@ Page({
     navSelectIndex:0,
     shophelper0: [],
     shophelper1: [],
-    list:[{
-      avatar: "/img/goods.png",
-      user: "xxx",
-      name: "可比克薯片",
-      address: "阿拉斯加",
-      price: 100,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
-      tag: "",
-      state: 0
-    },
-    {
-      avatar: "/img/goods.png",
-      user: "xxx",
-      name: "可比克薯片",
-      address: "阿拉斯加",
-      price: 100,
-      gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
-      tag: "",
-      state: 1
-    }]
+    list:[
+    //   {
+    //   avatar: "/img/goods.png",
+    //   user: "xxx",
+    //   name: "可比克薯片",
+    //   address: "阿拉斯加",
+    //   price: 100,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+    //   tag: "",
+    //   state: 0
+    // },
+    // {
+    //   avatar: "/img/goods.png",
+    //   user: "xxx",
+    //   name: "可比克薯片",
+    //   address: "阿拉斯加",
+    //   price: 100,
+    //   gmtCreate: new Date().toJSON().replace('T', ' ').split('.')[0],
+    //   tag: "",
+    //   state: 1
+    // }
+  ]
   },
   formatTime(e){
     if(e == undefined)
@@ -142,14 +144,16 @@ Page({
   getList(type = 0){
     wx.showLoading({title:"正在加载"})
     let that = this;
+    if(type == 0){
+      that.setData({
+        dataList: [],
+        "page.page": 1
+      })
+    }
     api.get("/diet/deliveryOrder/getList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.dataList;
         var page = that.data.page;
-        if(type == 0){
-          list = [];
-          page.page = 1
-        }
         page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         
         res.data.list.forEach(item=>{

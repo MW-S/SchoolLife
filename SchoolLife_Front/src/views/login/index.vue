@@ -1,5 +1,6 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" >
+    <img style="opacity:0.7;position: absolute;width: 100%;height: 100%;" src="@/assets/loginBackground.jpg" >
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">

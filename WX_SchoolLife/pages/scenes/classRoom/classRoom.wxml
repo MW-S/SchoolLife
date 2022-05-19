@@ -10,7 +10,7 @@
         <view class="weui-label">校区</view>
       </view>
       <view class="weui-cell__bd">
-        <picker value="{{schoolAreaIndex}}" data-field="schoolAreaIndex" bindchange="buildPicker" range="{{schoolArea}}">
+        <picker value="{{schoolAreaIndex}}" data-field="schoolAreaIndex" disabled="{{true}}"  bindchange="buildPicker" range="{{schoolArea}}">
           <view class="weui-select weui-select_in-select-after">{{schoolArea[schoolAreaIndex]}}</view>
         </picker>
       </view>

@@ -20,9 +20,11 @@ App({
       }
     })
     this.globalData = {
-      serverUrl: 'http://localhost:8080',
-      // fileServerUrl: 'http://localhost/oss',
-      fileServerUrl: 'http://192.168.162.54:9001',
+      // serverUrl: 'http://192.168.100.186/prod',
+      serverUrl: 'http://120.25.235.215/prod',
+      // fileServerUrl: 'http://192.168.100.186/oss',
+      // fileServerUrl: 'http://192.168.162.54:9001',
+      fileServerUrl: 'http://120.25.235.215',
       userInfo: {},
       is_bind_school: false,
       is_login: false,

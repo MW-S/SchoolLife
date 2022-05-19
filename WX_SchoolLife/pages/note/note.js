@@ -130,14 +130,13 @@ Page({
   },
   getList(type = 0){
     let that = this;
+    var list = that.data.dataList;
+    var page = that.data.page;
+    if(type == 0){
+      list = [], page.page = 1;
+    }
     api.get("/entertainment/note/getNoteList", that.data.page).then(res=>{
       if(res.code == 1){
-        var list = that.data.dataList;
-        var page = that.data.page;
-        if(type == 0){
-          list = [];
-          page.page = 1
-        }
         page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);
@@ -154,13 +153,14 @@ Page({
       console.log(res);
     })
   },
-  formatDate(time){
-    var date = undefined,res ;
+  formatDate(time = new Date()){
+    var date = undefined;
+    var res = undefined;
     if(time == undefined || time == null){
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

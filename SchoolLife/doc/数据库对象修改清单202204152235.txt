@@ -1,8 +1,0 @@
-alter table `seat_order`
-	add column `state` tinyint(2) default 0 comment '0-正在使用 1-已结束使用' after `user_id`;
-
-alter table `user`
-	add column `carId` varchar(16) default null comment '车辆ID' after `state`;
-
-ALTER TABLE `user`
-	CHANGE COLUMN `carId` `carId` VARCHAR(20) NULL DEFAULT NULL COMMENT '车辆ID' COLLATE 'utf8_general_ci' AFTER `state`;

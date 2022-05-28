@@ -10,11 +10,11 @@
     </view>  
     <view class='bound'>我是上面nav的补位块</view>
     
-    <view class='list'>
+    <view class='list'  style="min-height:100vh;">
       <block wx:for="{{list}}" wx:key="">
           <view class='one'>
               <view class='user'>
-                 <image src='{{item.avatar}}'></image>
+                 <image src='{{fileServerUrl + item.avatar}}'></image>
                   <view class='info'>
                      <view class='a'>
                         <text>{{item.user}}</text>
@@ -33,8 +33,11 @@
               <view class='col'>
                  <image src='/img/addr.png'></image>{{item.address}}
               </view>
-              <view class='sure' wx:if="{{item.state==0}}">
+              <view class='sure' wx:if="{{item.state == '0'}}">
                  <view>快来帮帮我吧^_^</view><text bindtap='select' class='help' data-id='{{item.id}}'>帮忙</text>
+              </view>
+              <view class='sure' wx:elif="{{item.state == '1'}}">
+                 <view>已经快结束了^_^</view><text bindtap='updateState' class='help' data-id='{{item.id}}'>结束订单</text>
               </view>
                <view class='sure' wx:else>
                  <view>已经不需要帮助了^_^</view><text class='help1'>已处理</text>

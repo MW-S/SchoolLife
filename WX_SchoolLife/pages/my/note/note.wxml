@@ -3,7 +3,7 @@
     <view class="box">
       <view class="box_bottom">
         <view>
-          <text class="title">{{item.user}}:</text>
+          <text class="title">{{user.name}}:</text>
         </view>
       </view>
       <view class="info">

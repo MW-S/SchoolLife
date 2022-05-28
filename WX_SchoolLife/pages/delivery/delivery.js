@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    fileServerUrl: app.globalData.fileServerUrl,
     total: 0,
     page:{
       page: 1,
@@ -150,7 +151,7 @@ Page({
         "page.page": 1
       })
     }
-    api.get("/diet/deliveryOrder/getList", that.data.page).then(res=>{
+    api.get("/diet/deliveryOrder/getDeliveryList", that.data.page).then(res=>{
       if(res.code == 1){
         var list = that.data.dataList;
         var page = that.data.page;
@@ -179,7 +180,7 @@ Page({
       date = new Date()
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }else{
-      date = new Date(time);
+      date = new Date(time.replace(/-/g,'/'));
       date = new Date(date.getTime() + 16 * 60 * 60 * 1000 );
       res =  date.toJSON().replace('T', ' ').split('.')[0];
     }

@@ -31,13 +31,14 @@
   padding-bottom: 150rpx;
 }
 .list .one{
-  padding: 20rpx 0;
+  padding: 20rpx;
   display: flex;
   flex-direction: column;
   margin-top: 20rpx;
   border-bottom: 1px solid #eee;
   width: 95vw;
-  margin: 0 auto;
+  margin: 20rpx auto;
+  box-shadow: 10rpx 0rpx 10rpx 10rpx #eee;
 }
 .list .one .user image{
    height: 12vw;

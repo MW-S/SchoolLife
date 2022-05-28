@@ -12,7 +12,6 @@
 }
 
 .box {
-  width: 84vw;
   border-radius: 20rpx;
   background-color: white;
   margin-top: 30rpx;
@@ -25,10 +24,8 @@
 }
 
 .line {
-  width: 90vw;
   border: 1rpx #e6e3e3 solid;
   position: relative;
-  left: -3vw;
   margin: 15rpx 0;
 }
 

@@ -8,6 +8,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    fileServerUrl: app.globalData.fileServerUrl,
     total: 0,
     page:{
       page: 1,
@@ -95,6 +96,28 @@ Page({
     let id = e.currentTarget.dataset.id;
     this.save({id: id, serverId: wx.getStorageSync("user").id, state: 1})
   },
+  updateState(e){
+    let that = this;
+    var vo = {
+      id: e.currentTarget.dataset.id,
+      state: 2
+    }
+    api.post("/diet/deliveryOrder/save", vo, 1).then(res=>{
+      wx.hideLoading();
+      if(res.code == 1){
+        wx.showToast({
+          title: "修改成功"
+        })
+        that.getListByVo();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+    })
+  },
   delete: function (e) {
     let that = this;
     that.del(e.currentTarget.dataset.id);
@@ -158,7 +181,7 @@ Page({
     if(type == 0){
       list = [], page.page = 1;
     }
-    api.post("/diet/deliveryOrder/getListByVo", {"page": that.data.page.page,
+    api.get("/diet/deliveryOrder/getDeliveryListByVo", {"page": that.data.page.page,
     "size": that.data.page.size,
       "aimVo": JSON.stringify(that.data.vo)}
    , 0 , 0).then(res=>{

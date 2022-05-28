@@ -181,6 +181,15 @@ Page({
       console.log(res);
     })
   },
+  deleteImg(event){
+    let index= event.detail.index
+    var fileList = this.data.fileList;
+    fileList.splice(index, 1);
+    this.setData({
+      fileList
+    });
+    console.log(index)//输出的就是图片所在fileList的下标，自己根据需要进行操作就行
+  },
   afterRead(event) {
     let that = this;
     const { file } = event.detail;
@@ -245,7 +254,7 @@ Page({
     }else{
       vo = {
         id : wx.getStorageSync("user").id,
-        carId: "川C2888B",//this.data.carId,
+        carId: this.data.carId,
         carPicture: this.data.carPicture
       }
       api.post("/user/auth/updateCarId", vo, 1).then(res=>{

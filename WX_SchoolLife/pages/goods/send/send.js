@@ -9,6 +9,14 @@ Page({
   data: {
     imgbox: [], //选择图片
     pictures: [], //上传云存储后的返回值
+    vo:{
+      phone: undefined,
+      wechatId: undefined,
+      name: undefined,
+      type: undefined,
+      price: undefined,
+      info: undefined,
+    }
   },
   onLoad: function(options) {
     this.setData({
@@ -26,7 +34,7 @@ Page({
     }
     var that = this
     wx.getStorage({
-      key: 'userInfo',
+      key: 'user',
       success: function(res) {
         that.setData({
           user: res.data
@@ -75,6 +83,44 @@ Page({
         } else if (5 > imgbox.length) {
           imgbox = imgbox.concat(tempFilePaths);
         }
+        imgbox.forEach(item=>{
+          wx.uploadFile({
+            url: app.globalData.serverUrl + "/user/uploadOss",
+            header: {"Authorization": "Bearer " +wx.getStorageSync('token')},
+            filePath: item, 
+            name: 'file',
+            formData: { user: 'test' },
+            success: function (res) {
+              console.log(res);
+              var data = JSON.parse(res.data)
+              console.log(data)
+              if (res.statusCode != 200) { 
+                wx.showModal({
+                  title: '提示',
+                  content: '上传失败',
+                  showCancel: false
+                })
+                return;
+              }
+              var imgs = that.data.pictures;
+              imgs.push(data.data.path)
+              that.setData({  //上传成功修改显示
+                pictures: imgs
+              })
+            },
+            fail: function (e) {
+              console.log(e);
+              wx.showModal({
+                title: '提示',
+                content: '上传失败',
+                showCancel: false
+              })
+            },
+            complete: function () {
+              wx.hideLoading()  //隐藏Toast
+            }
+          })
+        })
         that.setData({
           imgbox: imgbox
         });
@@ -82,11 +128,20 @@ Page({
     })
   },
   save(){
+    for(var a in this.data.vo){
+      if(this.data.vo[a] == undefined){
+        wx.showToast({
+          icon: "none",
+          title: '信息不完整！',
+        })
+        return;
+      }
+    }
     wx.showLoading({title: "正在发布"})
     let that = this;
     var vo =  that.data.vo;
     vo.userId = wx.getStorageSync("user").id
-    vo.pictures = JSON.stringify(that.data.imgbox)
+    vo.pictures = JSON.stringify(that.data.pictures)
     api.post("/goods/save", vo, 1).then(res=>{
       wx.hideLoading();
       if(res.code == 1){
@@ -106,15 +161,16 @@ Page({
     })
   },
   //发布按钮
-  fb: function(e) {
-    if (this.data.type == 'lostlost') {
-      var room = 'lost'
-    } else if (this.data.type == 'lostfound') {
-      var room = 'found'
-    } else {
-      var room = 'xianzhi'
+  fb:  function(e) {
+    for(var a in this.data.vo){
+      if(this.data.vo[a] == undefined){
+        wx.showToast({
+          icon: "none",
+          title: '信息不完整！',
+        })
+        return;
+      }
     }
-    console.log(room)
     if (!this.data.imgbox.length) {
       wx.showToast({
         icon: 'none',
@@ -130,13 +186,47 @@ Page({
         promiseArr.push(new Promise((reslove, reject) => {
           let item = this.data.imgbox[i];
           let suffix = /\.\w+$/.exec(item)[0]; //正则表达式返回文件的扩展名
-       
           var that = this
-      
+          wx.uploadFile({
+            url: app.globalData.serverUrl + "/user/uploadOss",
+            header: {"Authorization": "Bearer " +wx.getStorageSync('token')},
+            filePath: item, 
+            name: 'file',
+            formData: { user: 'test' },
+            success: function (res) {
+              console.log(res);
+              var data = JSON.parse(res.data)
+              console.log(data)
+              if (res.statusCode != 200) { 
+                wx.showModal({
+                  title: '提示',
+                  content: '上传失败',
+                  showCancel: false
+                })
+                return;
+              }
+              var imgs = that.data.pictures;
+              imgs.push(data.data.path)
+              that.setData({  //上传成功修改显示
+                pictures: imgs
+              })
+            },
+            fail: function (e) {
+              console.log(e);
+              wx.showModal({
+                title: '提示',
+                content: '上传失败',
+                showCancel: false
+              })
+            },
+            complete: function () {
+              wx.hideLoading()  //隐藏Toast
+            }
+          })
         }));
       }
       Promise.all(promiseArr).then(res => { //等数组都做完后做then方法
-       
+        this.save();
       })
 
     }

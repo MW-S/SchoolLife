@@ -20,6 +20,7 @@
     <view class="text" style="text-align:right">请联系:{{item.call}}</view>
   </view>
 </block> -->
+<wxs src="../goods.wxs" module="wxs" />
 <block >
   <view>
   <view class="box">
@@ -40,7 +41,8 @@
     </view>
     <block wx:key="index" wx:for="{{item.pictures}}">
       <view style="margin:auto;width:600rpx;">
-        <image src="{{item}}" mode="aspectFill" data-img='{{item}}' bindtap="previewImg"></image>
+        <image wx:if="{{wxs.filterImage(item)}}" src="{{item}}" mode="aspectFill" data-img='{{item}}' bindtap="previewImg"></image>
+        <image wx:else src="{{fileServerUrl + item}}" mode="aspectFill" data-img='{{item}}' bindtap="previewImg"></image>
       </view>
     </block>
   </view>

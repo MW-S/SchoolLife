@@ -7,6 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    user:  wx.getStorageSync("user"),
     userId: wx.getStorageSync("user").id,
     isSend: false,
     dataList: [],

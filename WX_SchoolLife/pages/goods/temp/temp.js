@@ -1,9 +1,11 @@
 const api = require('../../../utils/api.js');
+const app = getApp()
 Page({
   /**
    * 页面的初始数据
    */
   data: {
+    fileServerUrl: app.globalData.fileServerUrl,
     item:{
 
     }
@@ -31,11 +33,15 @@ Page({
   // 预览图片
   previewImg: function (e) {
     let imgData = e.currentTarget.dataset.img;
+    let images = [];
+    this.data.item.pictures.forEach(item=>{
+      images.push(this.data.fileServerUrl + item);
+    })
     wx.previewImage({
       //当前显示图片
-      current: imgData,
+      current: this.data.fileServerUrl + imgData,
       //所有图片
-      urls: this.data.item.fileIDs
+      urls: images
     })
   },
   /**

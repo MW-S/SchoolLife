@@ -1,10 +1,11 @@
+<wxs src="./goods.wxs" module="wxs" />
 <block wx:for="{{dataList}}" wx:key="index">
   <view bindtap="go" data-id="{{item.id}}">
     <view class="box">
       <view class="top">
         <view class="title">{{item.name}}</view>
         <view class="title">{{item.type}}</view>
-        <view class="price">{{item.price}}</view>
+        <view class="price">￥{{item.price}}</view>
       </view>
       <view class="line"></view>
       <view class="info">
@@ -12,10 +13,12 @@
       </view>
       <scroll-view scroll-x="true" class="img_box">
         <block wx:key="index" wx:for="{{item.pictures}}">
-          <image class='img' src='{{item}}' mode='aspectFill'></image>
+          <image class='img' wx:if="{{wxs.filterImage(item)}}" src='{{item}}' mode='aspectFill'></image>
+          <image class='img' wx:else src='{{fileServerUrl + item}}' mode='aspectFill'></image>
         </block>
       </scroll-view>
       <view class="box_bottom" wx:if="{{vo.userId==item.userId}}">
+        <view class="delete" wx:if="{{item.state == 'true'}}" catchtap="updateState" data-id="{{item.id}}">结束订单</view>
         <view class="delete" catchtap="delete" data-id="{{item.id}}">删除</view>
         <view class="time">{{item.gmtCreate}}</view>
       </view>

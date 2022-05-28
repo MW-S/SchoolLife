@@ -1,9 +1,0 @@
-
-ALTER TABLE `user`
-	CHANGE COLUMN `carId` `car_id` VARCHAR(20) NULL DEFAULT NULL COMMENT '车辆ID' COLLATE 'utf8_general_ci' AFTER `state`;
-
-alter table `user`
-	add column `car_picture` text default null comment '车辆照片' after `car_id`;
-
-alter table `user`
-	add column `number` text default null comment '学号' after `password`;

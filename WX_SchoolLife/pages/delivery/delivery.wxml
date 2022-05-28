@@ -1,20 +1,20 @@
 <!--pages/shophelper/shophelper.wxml-->
 <view class='container'>
-    <view class='nav'>
+    <!-- <view class='nav'>
        <view class="one new {{navSelectIndex == 0?'selected':''}}" bindtap='selectNav' data-index="0">
           官渡校区
         </view>
        <view class="one {{navSelectIndex == 1?'selected':''}}" bindtap='selectNav' data-index="1">
           西城校区
        </view>   
-    </view>  
-    <view class='bound'>我是上面nav的补位块</view>
+    </view>   -->
+    <!-- <view class='bound'>我是上面nav的补位块</view> -->
     
-    <view class='list'>
+    <view class='list' style="min-height:100vh;">
       <block wx:for="{{list}}" wx:key="">
           <view class='one'>
               <view class='user'>
-                 <image src='{{item.avatar}}'></image>
+                 <image src='{{fileServerUrl + item.avatar}}'></image>
                   <view class='info'>
                      <view class='a'>
                         <text>{{item.user}}</text>
@@ -28,13 +28,17 @@
               <view class='col'>
                  <image src='/img/goods.png'></image>{{item.name}}
               </view>
+              <view class='col'>校区：<text>{{array[item.school]}}</text></view>
               <view class='col'>价格：<text>{{item.price}}</text></view>
               <view class='col'>备注：<text>{{item.tag}}</text></view>
               <view class='col'>
                  <image src='/img/addr.png'></image>{{item.address}}
               </view>
-              <view class='sure' wx:if="{{item.state==0}}">
+              <view class='sure' wx:if="{{item.state=='0'}}">
                  <view>快来帮帮我吧^_^</view><text bindtap='select' class='help' data-id='{{item.id}}'>帮忙</text>
+              </view>
+              <view class='sure' wx:elif="{{item.state=='1'}}">
+                 <view>已经快结束了^_^</view><text  class='help' data-id='{{item.id}}'>配送中</text>
               </view>
                <view class='sure' wx:else>
                  <view>已经不需要帮助了^_^</view><text class='help1'>已处理</text>

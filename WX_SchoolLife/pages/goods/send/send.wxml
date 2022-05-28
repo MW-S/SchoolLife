@@ -37,12 +37,12 @@
             <view class='img-box'>
               <image class='img' src='{{item}}' mode="aspectFill"></image>
               <view class='img-delect' data-deindex='{{index}}' bindtap='imgDelete1'>
-                <image class='img' src='../../images/delete.png'></image>
+                <image class='img' src='/images/delete.png'></image>
               </view>
             </view>
           </block>
           <view class='img-box' bindtap='addPic1' wx:if="{{imgbox.length<5}}">
-            <image class='img' src='../../images/add_images.png'></image>
+            <image class='img' src='/img/add.png'></image>
           </view>
         </scroll-view>
       </view>
@@ -105,4 +105,4 @@
   </block> -->
 </view>
 
-<button bindtap='save'>上传</button>
+<button bindtap='save'>发布</button>

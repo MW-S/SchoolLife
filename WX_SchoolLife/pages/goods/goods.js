@@ -1,11 +1,13 @@
 
 const api = require('../../utils/api.js');
+const app = getApp();
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    fileServerUrl: app.globalData.fileServerUrl,
     imgbox: [],
     stateText: ["未出售", "已出售"],
     vo:{userId: wx.getStorageSync("user").id},
@@ -42,6 +44,7 @@ Page({
    */
   onLoad: async function(options) {
     var that = this
+    console.log(options)
     var userId = options.userId;
     if(userId != undefined){
       that.setData({
@@ -56,6 +59,28 @@ Page({
     let that = this;
     that.del(e.currentTarget.dataset.id);
     that.getList();
+  },
+  updateState: function(e){
+    let that = this;
+    var vo = {
+      id: e.currentTarget.dataset.id,
+      state: true
+    }
+    api.post("/goods/save", vo, 1).then(res=>{
+      wx.hideLoading();
+      if(res.code == 1){
+        wx.showToast({
+          title: "修改成功"
+        })
+        that.getListByVo();
+      }
+    }).catch(res=>{
+      wx.hideLoading();
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+    })
   },
   send: function() {
     wx.getStorage({
@@ -113,16 +138,13 @@ Page({
   },
   getList(type = 0){
     let that = this;
+    var list = that.data.dataList;
+    var page = that.data.page;
     if(type == 0){
-      that.setData({
-        dataList: [],
-        "page.page": 1
-      })
+      list = [], page.page = 1;
     }
     api.get("/goods/getList", that.data.page).then(res=>{
       if(res.code == 1){
-        var list = that.data.dataList;
-        var page = that.data.page;
         page.page = (page.page * page.size < res.data.total)? page.page + 1: page.page
         res.data.list.forEach(item=>{
           var tmp = that.formatDate(item.gmtCreate);

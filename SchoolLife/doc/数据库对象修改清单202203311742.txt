@@ -1,9 +1,0 @@
-alter table `car`
-	drop foreign key `car_ibfk_1`,
-	drop column `user_id`;
-
-alter table `delivery_order`
-	add column state tinyint(2) null default 0 comment'订单状态 2-已送达 1-配送中  0-取货中' after `server_phone`;
-
-alter table `seat`
-	add column state tinyint(1) null default 0 comment'座位状态 1-已占用  0-空闲' after `location`;

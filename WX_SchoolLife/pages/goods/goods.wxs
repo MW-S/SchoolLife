@@ -1,0 +1,6 @@
+var filterImage = function(img) {
+  return img.indexOf("http") != -1;
+}
+module.exports = {
+  filterImage: filterImage
+};

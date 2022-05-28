@@ -95,7 +95,7 @@
          </view>
       </picker>
       <view class="picker" wx:if="{{type==1}}" style="display: flex;margin-top: 20px;justify-content: center;">
-        <van-uploader max-count="{{1}}" file-list="{{ fileList }}" bind:after-read="afterRead" />
+        <van-uploader max-count="{{1}}" file-list="{{ fileList }}" catch:delete="deleteImg"  bind:after-read="afterRead" />
       </view>
       <view class='submit' bindtap='bindInfo'>{{(type==0 && dormitoryIndex!=undefined)||(type==1 && carIndex!=undefined)?'更改绑定':'绑定'}}</view>
 </view> 

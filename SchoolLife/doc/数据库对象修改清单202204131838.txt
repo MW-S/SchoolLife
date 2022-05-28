@@ -1,3 +1,0 @@
-alter table `vindicate`
-	add column `receiver` varchar(128) not null  comment '收信人' after `content`,
-	add column `writer` varchar(128) not null  comment '收信人' after `receiver`;

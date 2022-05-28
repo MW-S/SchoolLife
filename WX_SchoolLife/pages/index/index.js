@@ -101,9 +101,62 @@ Page({
       urls: this.data.share_detail.images // 需要预览的图片http链接列表
     })
   },
+  bindNumber(number){
+    if(number == "" || number == null || number == undefined){
+      return;
+    }
+    var vo = {
+      id : wx.getStorageSync("user").id,
+      number: number
+    }
+    api.post("/user/auth/updateNumber", vo, 1).then(res=>{
+      if(res.code == 1){
+        wx.showToast({
+          title: "绑定成功"
+        })
+        this.getInfo();
+      }
+    }).catch(res=>{
+      wx.showToast({
+        title: res.msg
+      })
+      console.log(res);
+    })
+  },
+  showBindNumber(){
+    let that = this;
+    wx.showModal({
+      title: "学号绑定",
+      editable: true,
+      showCancel: false,
+      placeholderText: "请输入学号",
+      success(res){
+        if (res.confirm) {
+          console.log('用户点击确定' + res.content)
+          that.bindNumber(res.content)
+        } else if (res.cancel) {
+          console.log('用户点击取消')
+        }
+      },
+      fail(res){
+        console.log(res)
+      },
+      complete(res){
+        console.log(res)
+        if(res.cancel || res.content == "" || res.content == null || res.content == undefined){
+          that.showBindNumber()
+        }
+      }
+    })
+  },
   getInfo(){
+    let that = this;
     api.get("/user/auth/info").then(res=>{
       if(res.code == 1){
+        var user = res.data.data;
+        if(user.number==null || user.number == undefined || user.number == ""){
+          that.showBindNumber();
+        }
         wx.setStorageSync('user', res.data.data)
         wx.setStorageSync("noteCount", res.data.noteCount)
         wx.setStorageSync("vindicateCount", res.data.vindicateCount)
